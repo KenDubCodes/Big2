@@ -831,6 +831,8 @@ function AIPlay(PlayerinTurn, CardsSelected) {
 function CheckWinner(i) {
     if (Players[i].hand.length == 0) {
         GameOver = true;
+        DeactivateButtons();
+        
         setTimeout(() => {
             CreatStartButton();
             ClearCardsonTable();}, 1000);
