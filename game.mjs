@@ -15,6 +15,7 @@ P0CardsonTablecontainer, P1CardsonTablecontainer,
 P2CardsonTablecontainer, P3CardsonTablecontainer;
 
 var manifest = [
+    {"src": "startscreen.jpg", "id": "startscreen"},
     {"src": "cardback.jpg", "id": "cardback"},
     {"src": "2♠.png", "id": "2♠"},{"src": "2♣.png", "id": "2♣"},
     {"src": "2♥.png", "id": "2♥"},{"src": "2♦.png", "id": "2♦"},
@@ -49,14 +50,35 @@ loader.loadManifest(manifest, true, "./images/");
 
 //1. Initialize
 var stage = new createjs.Stage("GameCanvas");
+
 var background = new createjs.Shape();
 background.graphics.beginLinearGradientFill(["#229954", "#1E8449"], [0.05, 1],
-0, 0, 0, 800).drawRect(0, 0, 1000, 800);
+0, 0, 0, 720).drawRect(0, 0, 1080, 720);
 background.x = 0;
 background.y = 0;
 background.name = "background";
 stage.addChild(background);
 stage.update();
+
+//Start Screen
+var StartScreenContainer = new createjs.Container();
+stage.addChild(StartScreenContainer);
+
+function AddStartScreen(){
+    var startscreenimg = new Image();
+    startscreenimg.src = "./images/startscreen.jpg";
+
+    var startscreen = new createjs.Bitmap(startscreenimg);
+    startscreen.x = 140;
+    startscreen.y = 60;
+    startscreen.name = "startscreen";
+    StartScreenContainer.addChild(startscreen); 
+}
+
+function RemoveStartScreen() {
+    StartScreenContainer.removeAllChildren();
+}
+
 
 
 //2. Define Container to hold each player's hand information
@@ -82,7 +104,7 @@ stage.update();
 var P0HandSelectCheck = [];
 function DisplayP0Hand(hand) {
     var cards = [];
-    var align = 380 - (hand.length * 20);
+    var align = 465 - (hand.length * 20);
     var count = 0;
     for (let n = 0; n <= hand.length - 1; n++) {
         P0HandSelectCheck.push(false);
@@ -90,7 +112,7 @@ function DisplayP0Hand(hand) {
         cards.push(new createjs.Bitmap(loader.getResult(hand[n].name)));
         cards[n].scale = 0.7;
         cards[n].x = align + count;
-        cards[n].y = 600;
+        cards[n].y = 520;
         cards[n].name = n;
         P0container.addChild(cards[n]);
     } 
@@ -106,23 +128,23 @@ function P0SelectedCards () {
         let card = P0container.children[i];
         card.addEventListener("click", function(event) {
       
-            if (card.y == 600) {
+            if (card.y == 520) {
 
                 P0selectedcards.push(P0container.children.indexOf(card));
-                card.y = 560;
+                card.y = 480;
                 stage.update();
                 console.log("P0selectedcards: ", P0selectedcards);
                 return;
             }
 
-            if (card.y == 560) {
+            if (card.y == 480) {
 
                 for (let n = P0selectedcards.length - 1; n >= 0; n--) {
                     if (P0selectedcards[n] == i){
                         P0selectedcards.splice(n, 1);
                     }
                 }
-                card.y = 600;
+                card.y = 520;
                 stage.update();
                 console.log("P0selectedcards: ", P0selectedcards)
                 return;
@@ -134,7 +156,7 @@ function P0SelectedCards () {
 function createP1CardBack(i) {
 
     var show = i - 1;
-    var align = 350 - (i*10);
+    var align = 310 - (i*10);
     if (show >= 0){
         var cardbacks = [];
         var count = 0;
@@ -142,7 +164,7 @@ function createP1CardBack(i) {
             count += 25;
             cardbacks.push(new createjs.Bitmap(loader.getResult("cardback")));
             cardbacks[n].scale = 0.6;
-            cardbacks[n].x = 850;
+            cardbacks[n].x = 925;
             cardbacks[n].y = align + count;
             cardbacks[n].rotation = 270;
             P1container.addChild(cardbacks[n]);
@@ -154,7 +176,7 @@ function createP1CardBack(i) {
 function createP2CardBack(i) {
 
     var show = i - 1;
-    var align = 420 - (i*10);
+    var align = 465 - (i*10);
     if(show >= 0); {
         var cardbacks = [];
         var count = 0;
@@ -174,7 +196,7 @@ function createP2CardBack(i) {
 function createP3CardBack(i) {
 
     var show = i - 1;
-    var align = 270 - (i*10);
+    var align = 240 - (i*10);
     if(show >= 0) {
         var cardbacks = [];
         var count = 0;
@@ -202,13 +224,13 @@ function P0CardsonTable(CardsonTable) {
 
     var P0hits = [];
     var count = 0;
-    var align = 420 - (CardsonTable.length*20);
+    var align = 475 - (CardsonTable.length*20);
     for (let i = 0; i <= CardsonTable.length - 1; i++){
         count += 45;
         P0hits.push(new createjs.Bitmap(loader.getResult(CardsonTable[i])));
         P0hits[i].scale = 0.55;
         P0hits[i].x = align + count;
-        P0hits[i].y = 420;
+        P0hits[i].y = 360;
         P0CardsonTablecontainer.addChild(P0hits[i]);
     }
     stage.update();
@@ -218,12 +240,12 @@ function P1CardsonTable(CardsonTable) {
 
     var P1hits = [];
     var count = 0;
-    var align = 415 + (CardsonTable.length*25);
+    var align = 385 + (CardsonTable.length*25);
     for (let i = 0; i <= CardsonTable.length - 1; i++){
         count += 45;
         P1hits.push(new createjs.Bitmap(loader.getResult(CardsonTable[i])));
         P1hits[i].scale = 0.55;
-        P1hits[i].x = 690;
+        P1hits[i].x = 765;
         P1hits[i].y = align - count;
         P1hits[i].rotation = 270;
         P1CardsonTablecontainer.addChild(P1hits[i]);
@@ -235,7 +257,7 @@ function P2CardsonTable(CardsonTable) {
 
     var P2hits = [];
     var count = 0;
-    var align = 420 - (CardsonTable.length*20);
+    var align = 475 - (CardsonTable.length*20);
     for (let i = 0; i <= CardsonTable.length - 1; i++){
         count += 45;
         P2hits.push(new createjs.Bitmap(loader.getResult(CardsonTable[i])));
@@ -251,7 +273,7 @@ function P3CardsonTable(CardsonTable) {
 
     var P3hits = [];
     var count = 0;
-    var align = 280 - (CardsonTable.length*20);
+    var align = 245 - (CardsonTable.length*20);
     for (let i = 0; i <= CardsonTable.length - 1; i++){
         count += 45;
         P3hits.push(new createjs.Bitmap(loader.getResult(CardsonTable[i])));
@@ -271,8 +293,8 @@ function TextPass(PlayerinTurn) {
         P0CardsonTablecontainer.removeAllChildren();
         stage.update();
     
-        textpass.x = 440;
-        textpass.y = 550;
+        textpass.x = 485;
+        textpass.y = 490;
         textpass.textBaseline = "alphabetic";
         P0CardsonTablecontainer.addChild(textpass);
         stage.update();
@@ -282,8 +304,8 @@ function TextPass(PlayerinTurn) {
         P1CardsonTablecontainer.removeAllChildren();
         stage.update();
 
-        textpass.x = 780;
-        textpass.y = 420;
+        textpass.x = 890;
+        textpass.y = 380;
         textpass.rotation = 270;
         textpass.textBaseline = "alphabetic";
         P1CardsonTablecontainer.addChild(textpass);
@@ -294,8 +316,8 @@ function TextPass(PlayerinTurn) {
         P2CardsonTablecontainer.removeAllChildren();
         stage.update();
 
-        textpass.x = 440;
-        textpass.y = 220;
+        textpass.x = 485;
+        textpass.y = 215;
         textpass.textBaseline = "alphabetic";
         P2CardsonTablecontainer.addChild(textpass);
         stage.update();
@@ -305,8 +327,8 @@ function TextPass(PlayerinTurn) {
         P3CardsonTablecontainer.removeAllChildren();
         stage.update();
 
-        textpass.x = 200;
-        textpass.y = 290;
+        textpass.x = 185;
+        textpass.y = 250;
         textpass.rotation = 90;
         textpass.textBaseline = "alphabetic";
         P3CardsonTablecontainer.addChild(textpass);
@@ -339,14 +361,14 @@ function ClearCardsonTable(){
 var ButtonHit = new createjs.Container();
 function CreateHitButton(){
     var hitbox = new createjs.Shape();
-    hitbox.graphics.beginFill("#85929E").drawRect(0, 0, 150, 80);
-    hitbox.x = 800;
-    hitbox.y = 580;
+    hitbox.graphics.beginFill("#85929E").drawRect(0, 0, 170, 75);
+    hitbox.x = 880;
+    hitbox.y = 525;
     hitbox.name = "hitbox";
     ButtonHit.addChild(hitbox);
     var hittext = new createjs.Text("Hit", "30px Arial", "#FFFFFF");
-    hittext.x = 860;
-    hittext.y = 630;
+    hittext.x = 950;
+    hittext.y = 575;
     hittext.textBaseline = "alphabetic";
     ButtonHit.addChild(hittext);
     stage.addChild(ButtonHit);
@@ -358,14 +380,14 @@ function CreateHitButton(){
 var ButtonPass = new createjs.Container();
 function CreatePassButton() {
     var passbox = new createjs.Shape();
-    passbox.graphics.beginFill("#85929E").drawRect(0, 0, 150, 80);
-    passbox.x = 800;
-    passbox.y = 685;
+    passbox.graphics.beginFill("#85929E").drawRect(0, 0, 170, 75);
+    passbox.x = 880;
+    passbox.y = 615;
     passbox.name = "passbox";
     ButtonPass.addChild(passbox);
     var passtext = new createjs.Text("Pass", "30px Arial", "#FFFFFF");
-    passtext.x = 845;
-    passtext.y = 735;
+    passtext.x = 935;
+    passtext.y = 660;
     passtext.textBaseline = "alphabetic";
     ButtonPass.addChild(passtext);
     stage.addChild(ButtonPass);
@@ -379,13 +401,13 @@ function CreatePassButton() {
 
 function ActivateButtons() {
     var hitbox = ButtonHit.getChildByName("hitbox");
-    hitbox.graphics.clear().beginFill("#F1C40F").drawRect(0, 0, 150, 80);
-    hitbox.x = 800;
-    hitbox.y = 580;
+    hitbox.graphics.clear().beginFill("#F1C40F").drawRect(0, 0, 170, 75);
+    hitbox.x = 880;
+    hitbox.y = 525;
     var passbox = ButtonPass.getChildByName("passbox");
-    passbox.graphics.clear().beginFill("#2980B9").drawRect(0, 0, 150, 80);
-    passbox.x = 800;
-    passbox.y = 685;   
+    passbox.graphics.clear().beginFill("#2980B9").drawRect(0, 0, 170, 75);
+    passbox.x = 880;
+    passbox.y = 615;   
     stage.update();
     ButtonHit.addEventListener("click", function(event) {
         if (PlayerinTurn == 0) {
@@ -401,13 +423,13 @@ function ActivateButtons() {
 
 function DeactivateButtons() {
     var hitbox = ButtonHit.getChildByName("hitbox");
-    hitbox.graphics.clear().beginFill("#85929E").drawRect(0, 0, 150, 80);
-    hitbox.x = 800;
-    hitbox.y = 580;
+    hitbox.graphics.clear().beginFill("#85929E").drawRect(0, 0, 170, 75);
+    hitbox.x = 880;
+    hitbox.y = 525;
     var passbox = ButtonPass.getChildByName("passbox");
-    passbox.graphics.clear().beginFill("#85929E").drawRect(0, 0, 150, 80);
-    passbox.x = 800;
-    passbox.y = 685;   
+    passbox.graphics.clear().beginFill("#85929E").drawRect(0, 0, 170, 75);
+    passbox.x = 880;
+    passbox.y = 615;   
     stage.update();
 
     ButtonHit.removeAllEventListeners();
@@ -417,30 +439,36 @@ function DeactivateButtons() {
 
 //5. Create the Start Button
 var ButtonStart = new createjs.Container();
-var startbox = new createjs.Shape();
-startbox.graphics.beginFill("#E74C3C").drawRect(0, 0, 120, 120);
-startbox.x = 25;
-startbox.y = 615;
-startbox.name = "startbox";
-ButtonStart.addChild(startbox);
-var starttext = new createjs.Text("Start", "30px Arial", "#FFFFFF");
-starttext.x = 50;
-starttext.y = 685;
-starttext.textBaseline = "alphabetic";
-ButtonStart.addChild(starttext);
-stage.addChild(ButtonStart);
-stage.update();
+
+function CreatStartButton(){
+    var startbox = new createjs.Shape();
+    startbox.graphics.beginFill("#E74C3C").drawRect(0, 0, 120, 120);
+    startbox.x = 480;
+    startbox.y = 300;
+    startbox.name = "startbox";
+    ButtonStart.addChild(startbox);
+    var starttext = new createjs.Text("Start", "30px Arial", "#FFFFFF");
+    starttext.x = 505;
+    starttext.y = 370;
+    starttext.textBaseline = "alphabetic";
+    ButtonStart.addChild(starttext);
+    stage.addChild(ButtonStart);
+    stage.update(); 
+}
+
 
 
 //6. Game Flow: Start Game
-ButtonStart.addEventListener("click", function(event) { 
+CreatStartButton();
+ButtonStart.addEventListener("click", function() { 
 
     //Graphics
     //Deactiviate Start Button untill end game
-    ButtonStart.removeAllEventListeners();
+    ButtonStart.removeAllChildren();
 
     CreateHitButton();
     CreatePassButton();
+    //
 
     StartGame();
     
@@ -457,8 +485,7 @@ ButtonStart.addEventListener("click", function(event) {
     DisplayHandCount(
         Players[1].hand.length,
         Players[2].hand.length,
-        Players[3].hand.length)
-
+        Players[3].hand.length);
     //
 
     FindDiamond3();
@@ -473,6 +500,7 @@ ButtonStart.addEventListener("click", function(event) {
     if (PlayerinTurn == 0) {
         ActivateButtons();
     }
+    //
 
     Players.forEach(element => {console.log(element);});
 
@@ -803,6 +831,7 @@ function AIPlay(PlayerinTurn, CardsSelected) {
 function CheckWinner(i) {
     if (Players[i].hand.length == 0) {
         GameOver = true;
+        setTimeout(() => {CreatStartButton()}, 1000);
     }
 }
 
