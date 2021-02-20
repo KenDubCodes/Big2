@@ -1198,8 +1198,8 @@ export default class Analytics {
                         (one[w][0][0].value == one[w - 2][0][0].value)) {
 
                         three.push(
-                            [[one[w - 2][0][0], one[w - 1][0][0], one[w][0][0], 
-                            1, one[w][0][0]].cardranking]);
+                            [[one[w - 2][0][0], one[w - 1][0][0], one[w][0][0]], 
+                            1, one[w][0][0].cardranking]);
 
                         one.splice(w - 2, 3);
                         break PushThree;
@@ -1329,18 +1329,33 @@ export default class Analytics {
 
 }
 
-/* 
+
+/*  
 //For Analytics Testing
 var deck = new Deck();
 var rule = new Rules();
 deck.shuffle();
 
-var hand = [];
+var hand = [
+{name: "3♦", suit: "♦", value: 0, cardranking: 1},
+{name: "3♥", suit: "♥", value: 0, cardranking: 3},
+{name: "3♠", suit: "♠", value: 0, cardranking: 4},
+{name: "4♣", suit: "♣", value: 1, cardranking: 6},
+{name: "6♦", suit: "♦", value: 3, cardranking: 13},
+{name: "7♣", suit: "♣", value: 4, cardranking: 18},
+{name: "9♣", suit: "♣", value: 6, cardranking: 26},
+{name: "10♥", suit: "♥", value: 7, cardranking: 31},
+{name: "J♥", suit: "♥", value: 8, cardranking: 35},
+{name: "K♣", suit: "♣", value: 10, cardranking: 42},
+{name: "A♥", suit: "♥", value: 11, cardranking: 47},
+{name: "2♦", suit: "♦", value: 12, cardranking: 49},
+{name: "2♠", suit: "♠", value: 12, cardranking: 52},
+];
 
 for (let i = 0;  i <= 12; i++) {
 
     hand.push(deck.draw());
-}
+}  
 
 hand.sort((a, b) => a.cardranking - b.cardranking) 
 
@@ -1368,12 +1383,11 @@ analytics.UpdateRemainingCombinations();
 analytics.AnalyzeHand(hand, HandCount1, HandCount2, HandCount3);
 
 
-//console.log("Analyzed Hand [Singles, Pairs, Threes, Fives]: ", analytics.analyzedhand); 
+console.log("Analyzed Hand [Singles, Pairs, Threes, Fives]: ", analytics.analyzedhand); 
 
-console.log(
-"Straggling Singles: ", analytics.stragglingsingles,
+console.log("Straggling Singles: ", analytics.stragglingsingles,
 "Straggling Pairs: ", analytics.stragglingpairs,
 "Commanding Singles: ", analytics.commandingsingles,
-"Commanding Pairs: ", analytics.commandingpairs); 
-*/
+"Commanding Pairs: ", analytics.commandingpairs); */
+ 
 

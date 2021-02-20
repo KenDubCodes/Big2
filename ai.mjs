@@ -48,7 +48,7 @@ export default class AI {
                     var combinations = this.analytics.analyzedhand[i][0];
 
                     for (let k = combinations.length - 1; k >= 0; k--) {
-                        for (let j = 0; j <= combinations[0][0].length - 1; j++){
+                        for (let j = 0; j <= combinations[k][0].length - 1; j++){
 
                             if (combinations[k][0][j].cardranking == 1){
                                 this.commandrate = combinations[k][3];
