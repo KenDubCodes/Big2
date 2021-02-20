@@ -13,7 +13,8 @@ CardsSelected, GameOver
 var P0container, P1container, P2container, P3container, 
 P0CardsonTablecontainer, P1CardsonTablecontainer, 
 P2CardsonTablecontainer, P3CardsonTablecontainer,
-HitButtonActivated, PassButtonActivated;
+P0NameContainer, P1NameContainer, P2NameContainer, P3NameContainer,
+ArrowContainer, HitButtonActivated, PassButtonActivated;
 
 var manifest = [
     {"src": "startscreen.jpg", "id": "startscreen"},
@@ -147,6 +148,16 @@ P2CardsonTablecontainer = new createjs.Container();
 stage.addChild(P2CardsonTablecontainer);
 P3CardsonTablecontainer = new createjs.Container(); 
 stage.addChild(P3CardsonTablecontainer);
+P0NameContainer = new createjs.Container();
+stage.addChild(P0NameContainer);
+P1NameContainer = new createjs.Container();
+stage.addChild(P1NameContainer);
+P2NameContainer = new createjs.Container();
+stage.addChild(P2NameContainer);
+P3NameContainer = new createjs.Container();
+stage.addChild(P3NameContainer);
+ArrowContainer = new createjs.Container();
+stage.addChild(ArrowContainer);
 
 
 //Define functions to display each player's cards
@@ -198,6 +209,19 @@ function P0SelectedCards () {
         });
     }
 } 
+
+//Hit Button only activates when Valid Cards are picked
+function HitActivateListener () {
+    for (let i = 0; i <= P0container.children.length - 1; i++){
+        let card = P0container.children[i];
+        card.addEventListener("click", function(event) {
+
+            ActivateHitConditions(P0selectedcards, CardsonTable);
+
+        });
+    }
+}
+
 
 function createP1CardBack(i) {
 
@@ -383,6 +407,82 @@ function ClearCardsonTable(){
     }
 }
 
+//Display Player Name
+function CreatePlayerName(){
+var P0name = new createjs.Text("YOU", "45px Copperplate", "#FFFFFF");
+P0name.shadow = new createjs.Shadow("#424949", 3, 3, 10);
+P0name.x = 120;
+P0name.y = 680;
+P0name.textBaseline = "alphabetic";
+P0NameContainer.addChild(P0name);
+
+var P1name = new createjs.Text("P1", "35px Copperplate", "#FFFFFF");
+P1name.shadow = new createjs.Shadow("#424949", 3, 3, 10);
+P1name.x = 1005;
+P1name.y = 100;
+P1name.textBaseline = "alphabetic";
+P1NameContainer.addChild(P1name);
+
+var P2name = new createjs.Text("P2", "35px Copperplate", "#FFFFFF");
+P2name.shadow = new createjs.Shadow("#424949", 3, 3, 10);
+P2name.x = 290;
+P2name.y = 45;
+P2name.textBaseline = "alphabetic";
+P2NameContainer.addChild(P2name);
+
+var P3name = new createjs.Text("P3", "35px Copperplate", "#FFFFFF");
+P3name.shadow = new createjs.Shadow("#424949", 3, 3, 10);
+P3name.x = 65;
+P3name.y = 560;
+P3name.textBaseline = "alphabetic";
+P3NameContainer.addChild(P3name);
+}
+
+function ClearPlayerName() {
+    P0NameContainer.removeAllChildren();
+    P1NameContainer.removeAllChildren();
+    P2NameContainer.removeAllChildren();
+    P3NameContainer.removeAllChildren();
+}
+
+//Create Turn Arrow
+function CreateTurnArrow() {
+    var arrow = new createjs.Shape();
+    arrow.graphics.beginFill("#F7DC6F").drawCircle(0, 0 ,13);
+    arrow.shadow = new createjs.Shadow("#424949", 3, 3, 3);
+/*     arrow.x = 500;
+    arrow.y = 550; */
+    arrow.name = "arrow";
+    ArrowContainer.addChild(arrow);
+}
+
+function TurnArrowPosition(PlayerinTurn) {
+
+    var arrow = ArrowContainer.getChildByName("arrow");
+    if (PlayerinTurn == 0) {
+        arrow.x = 90;
+        arrow.y = 667;
+    }
+    if (PlayerinTurn == 1) {
+        arrow.x = 980;
+        arrow.y = 90;
+    }
+    if (PlayerinTurn == 2) {
+        arrow.x = 260;
+        arrow.y = 35;
+    }
+    if (PlayerinTurn == 3) {
+        arrow.x = 40;
+        arrow.y = 550;
+    }
+} 
+
+function RemoveTurnArrow() {
+    ArrowContainer.removeAllChildren();
+}
+
+
+
 
 //3. Create The Hit Button
 var ButtonHit = new createjs.Container();
@@ -421,16 +521,12 @@ function CreatePassButton() {
     passtext.textBaseline = "alphabetic";
     ButtonPass.addChild(passtext);
     stage.addChild(ButtonPass);
-    ButtonPass.addEventListener("click", function(event) {
-        if (PlayerinTurn == 0) {
-            Pass(PlayerinTurn);
-        }
-    });
 }
 
 //Button Activations
 HitButtonActivated = false;
 PassButtonActivated = false;
+
 function ActivateHitButton() {
     var hitbox = ButtonHit.getChildByName("hitbox");
     hitbox.graphics.clear().beginLinearGradientFill(["#F1C40F", "#B7950B"], [0.05, 1],
@@ -530,6 +626,8 @@ ButtonStart.addEventListener("click", function() {
 
     CreateHitButton();
     CreatePassButton();
+    CreatePlayerName();
+    CreateTurnArrow();
     //
 
     StartGame();
@@ -540,34 +638,32 @@ ButtonStart.addEventListener("click", function() {
 
     PositionArray = [Players[0], Players[1], Players[2], Players[3]];
 
-    //Graphics: Display Cards
-    DisplayP0Hand(Players[0].hand);
-    P0SelectedCards();
-
-    DisplayHandCount(
-        Players[1].hand.length,
-        Players[2].hand.length,
-        Players[3].hand.length);
-    //
-
     FindDiamond3();
 
     console.log("Position Array: ", PositionArray)
 
     PlayerinTurn = PositionArray[0].id;
     PositionArray[0].turn = true;
-    Round = 0
+    Round = 0;
     
-    //Graphics: Activate Buttons
+    //Graphics: Display Cards and Acitvate Button
+    TurnArrowPosition(PlayerinTurn);
+    DisplayHandCount(
+        Players[1].hand.length,
+        Players[2].hand.length,
+        Players[3].hand.length);
+    DisplayP0Hand(Players[0].hand);
+    P0SelectedCards();
+
     if (Players[PlayerinTurn].id == 0) {
-        ActivateHitButton();
+        HitActivateListener ();
         ActivatePassButton(PlayerinTurn);
     }
     //
 
     Players.forEach(element => {console.log(element);});
 
-    //AI
+    //AI Update Analysis
     Players[PlayerinTurn].ai.UpdateCardsonTable(
         Round, Players[PlayerinTurn].command, CardsonTable, CardsonTableRanking);
     
@@ -800,7 +896,7 @@ function PlayCard(i) {
                 }  
             }
         } 
-        return alert("Invalid Hand")
+        return alert("BUGGED")
     } 
 }
 
@@ -886,6 +982,75 @@ function AIPlay(PlayerinTurn, CardsSelected) {
 
 }
 
+function ActivateHitConditions(P0selectedcards, CardsonTable) {
+
+    var pickcardcheck = [];
+    //Create a new array of cards for comparison   
+    for (let j = P0selectedcards.length -1; j >= 0; j--){
+
+        var pickcard = [...Players[0].hand].splice(P0selectedcards[j],1);
+        pickcardcheck = pickcardcheck.concat(pickcard);
+    }
+
+    pickcardcheck.sort((a, b) => a.cardranking - b.cardranking);
+
+    //Deactivate Hit if no card picked
+    if ((pickcardcheck.length == 0) && (HitButtonActivated == true)) {
+        DeactivateHitButton();
+        console.log("Hit Button: Deactivated");
+        return;  
+    }
+
+    //Control Hit Button for first Round
+    if ((pickcardcheck.length !== 0) && (Round == 0)) {
+
+        if ((rule.ValidFirstCommand(pickcardcheck) == true) &&
+        ((HitButtonActivated == false))) {
+                console.log("Hit Button: Activated");
+                ActivateHitButton();
+                return;  
+        }
+
+        if ((rule.ValidFirstCommand(pickcardcheck) == false) &&
+        ((HitButtonActivated == true))) {
+                console.log("Hit Button: Deactivated");
+                DeactivateHitButton();
+                return;  
+        }
+    } 
+
+    //Control Hit Button after first Round
+    if (Round > 0){
+
+        // If Play in Command or hit is valid
+        if (((Players[0].command == true) &&
+        (rule.ValidCommand(pickcardcheck) == true)) ||
+        ((Players[0].command == false) &&
+        (rule.ValidHit(pickcardcheck, CardsonTable) == true))) {
+                
+            if(HitButtonActivated == false) {
+                console.log("Hit Button: Activated");
+                ActivateHitButton();
+                return;
+            }
+        }
+
+        // If Play in Command or hit is valid
+        if (((Players[0].command == true) &&
+        (rule.ValidCommand(pickcardcheck) == false)) ||
+        ((Players[0].command == false) &&
+        (rule.ValidHit(pickcardcheck, CardsonTable) == false))) {
+            
+            if(HitButtonActivated == true) {
+                console.log("Hit Button: Deactivated");
+                DeactivateHitButton();
+                return;
+            }
+        }
+    }
+
+}
+
 function CheckWinner(PlayerinTurn) {
     if (Players[PlayerinTurn].hand.length == 0) {
         GameOver = true;
@@ -897,7 +1062,9 @@ function CheckWinner(PlayerinTurn) {
         setTimeout(() => {
             AddWinnerScreen();
             WinnerText(PlayerinTurn);
+            ClearPlayerName()
             ClearCardsonTable();
+            RemoveTurnArrow();
             P0container.removeAllChildren();
             P1container.removeAllChildren();
             P2container.removeAllChildren();
@@ -933,8 +1100,10 @@ function EndTurn(i) {
     Round++
 
     //Graphics: Activate Buttons if it's Player 0 turn
+    TurnArrowPosition(PlayerinTurn);
+
     if (PlayerinTurn == 0) {
-        ActivateHitButton();
+        HitActivateListener ();
         ActivatePassButton(PlayerinTurn);
     }
     
