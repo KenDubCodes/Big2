@@ -14,7 +14,7 @@ var P0container, P1container, P2container, P3container,
 P0CardsonTablecontainer, P1CardsonTablecontainer, 
 P2CardsonTablecontainer, P3CardsonTablecontainer,
 P0NameContainer, P1NameContainer, P2NameContainer, P3NameContainer,
-ArrowContainer, HitButtonActivated, PassButtonActivated;
+HitButtonActivated, PassButtonActivated;
 
 var manifest = [
     {"src": "startscreen.jpg", "id": "startscreen"},
@@ -67,12 +67,23 @@ background.y = 0;
 background.name = "background";
 stage.addChild(background);
 
+//Loading Text
+var loadingcontainer = new createjs.Container();
+stage.addChild(loadingcontainer);
+
+var loadingtext = new createjs.Text("Loading...", "30px Copperplate", "#FFFFFF");
+loadingtext.x = 480;
+loadingtext.y = 360;
+loadingtext.textBaseline = "alphabetic";
+loadingcontainer.addChild(loadingtext);
+
 //Start Screen
 var StartScreenContainer = new createjs.Container();
 stage.addChild(StartScreenContainer);
 
 //Add Start Screen and Start Button
 function handleComplete() {
+    loadingcontainer.removeAllChildren();
     AddStartScreen();
     CreatStartButton();
 }
@@ -156,8 +167,6 @@ P2NameContainer = new createjs.Container();
 stage.addChild(P2NameContainer);
 P3NameContainer = new createjs.Container();
 stage.addChild(P3NameContainer);
-ArrowContainer = new createjs.Container();
-stage.addChild(ArrowContainer);
 
 
 //Define functions to display each player's cards
@@ -411,29 +420,33 @@ function ClearCardsonTable(){
 function CreatePlayerName(){
 var P0name = new createjs.Text("YOU", "45px Copperplate", "#FFFFFF");
 P0name.shadow = new createjs.Shadow("#424949", 3, 3, 10);
-P0name.x = 120;
+P0name.x = 110;
 P0name.y = 680;
+P0name.name = "P0name";
 P0name.textBaseline = "alphabetic";
 P0NameContainer.addChild(P0name);
 
 var P1name = new createjs.Text("P1", "35px Copperplate", "#FFFFFF");
 P1name.shadow = new createjs.Shadow("#424949", 3, 3, 10);
-P1name.x = 1005;
-P1name.y = 100;
+P1name.x = 920;
+P1name.y = 110;
+P1name.name = "P1name";
 P1name.textBaseline = "alphabetic";
 P1NameContainer.addChild(P1name);
 
 var P2name = new createjs.Text("P2", "35px Copperplate", "#FFFFFF");
 P2name.shadow = new createjs.Shadow("#424949", 3, 3, 10);
-P2name.x = 290;
-P2name.y = 45;
+P2name.x = 270;
+P2name.y = 50;
+P2name.name = "P2name";
 P2name.textBaseline = "alphabetic";
 P2NameContainer.addChild(P2name);
 
 var P3name = new createjs.Text("P3", "35px Copperplate", "#FFFFFF");
 P3name.shadow = new createjs.Shadow("#424949", 3, 3, 10);
-P3name.x = 65;
+P3name.x = 25;
 P3name.y = 560;
+P3name.name = "P3name";
 P3name.textBaseline = "alphabetic";
 P3NameContainer.addChild(P3name);
 }
@@ -443,46 +456,60 @@ function ClearPlayerName() {
     P1NameContainer.removeAllChildren();
     P2NameContainer.removeAllChildren();
     P3NameContainer.removeAllChildren();
-}
+};
 
-//Create Turn Arrow
-function CreateTurnArrow() {
-    var arrow = new createjs.Shape();
-    arrow.graphics.beginFill("#F7DC6F").drawCircle(0, 0 ,13);
-    arrow.shadow = new createjs.Shadow("#424949", 3, 3, 3);
-/*     arrow.x = 500;
-    arrow.y = 550; */
-    arrow.name = "arrow";
-    ArrowContainer.addChild(arrow);
-}
-
-function TurnArrowPosition(PlayerinTurn) {
-
-    var arrow = ArrowContainer.getChildByName("arrow");
+function HighlightPlayerName(PlayerinTurn) {
+    
     if (PlayerinTurn == 0) {
-        arrow.x = 90;
-        arrow.y = 667;
+        var playertext = P0NameContainer.getChildByName("P0name");
+        playertext.scale = 1.2;
+        playertext.color = "#F7DC6F";
     }
+
     if (PlayerinTurn == 1) {
-        arrow.x = 980;
-        arrow.y = 90;
+        var playertext = P1NameContainer.getChildByName("P1name");
+        playertext.scale = 1.4;
+        playertext.color = "#F7DC6F";
     }
+
     if (PlayerinTurn == 2) {
-        arrow.x = 260;
-        arrow.y = 35;
+        var playertext = P2NameContainer.getChildByName("P2name");
+        playertext.scale = 1.4;
+        playertext.color = "#F7DC6F";
     }
+    
     if (PlayerinTurn == 3) {
-        arrow.x = 40;
-        arrow.y = 550;
+        var playertext = P3NameContainer.getChildByName("P3name");
+        playertext.scale = 1.4;
+        playertext.color = "#F7DC6F";
+    }  
+};
+
+function ClearHighlight(PlayerinTurn) {
+    if (PlayerinTurn == 0) {
+        var playertext = P0NameContainer.getChildByName("P0name");
+        playertext.scale = 1;
+        playertext.color = "#FFFFFF";
     }
-} 
 
-function RemoveTurnArrow() {
-    ArrowContainer.removeAllChildren();
+    if (PlayerinTurn == 1) {
+        var playertext = P1NameContainer.getChildByName("P1name");
+        playertext.scale = 1;
+        playertext.color = "#FFFFFF";
+    }
+
+    if (PlayerinTurn == 2) {
+        var playertext = P2NameContainer.getChildByName("P2name");
+        playertext.scale = 1;
+        playertext.color = "#FFFFFF";
+    }
+    
+    if (PlayerinTurn == 3) {
+        var playertext = P3NameContainer.getChildByName("P3name");
+        playertext.scale = 1;
+        playertext.color = "#FFFFFF";
+    } 
 }
-
-
-
 
 //3. Create The Hit Button
 var ButtonHit = new createjs.Container();
@@ -627,7 +654,6 @@ ButtonStart.addEventListener("click", function() {
     CreateHitButton();
     CreatePassButton();
     CreatePlayerName();
-    CreateTurnArrow();
     //
 
     StartGame();
@@ -647,7 +673,7 @@ ButtonStart.addEventListener("click", function() {
     Round = 0;
     
     //Graphics: Display Cards and Acitvate Button
-    TurnArrowPosition(PlayerinTurn);
+    HighlightPlayerName(PlayerinTurn);
     DisplayHandCount(
         Players[1].hand.length,
         Players[2].hand.length,
@@ -774,7 +800,7 @@ function PlayCard(i) {
 
     if (Players[i].turn === true) {
 
-        CardsSelected = []
+        CardsSelected = [];
 
         //Create a new array of cards for comparison   
         for (let j = P0selectedcards.length -1; j >= 0; j--){
@@ -793,9 +819,13 @@ function PlayCard(i) {
             CardsonTable = [];
             
             ///Remove the card from Player's hand
-            for (let j = P0selectedcards.length -1; j >= 0; j--) {
+            for (let j = CardsSelected.length -1; j >= 0; j--) {
+                for (let l = Players[i].hand.length - 1; l >= 0; l--) {
 
-                Players[i].hand.splice(P0selectedcards[j],1);              
+                    if(CardsSelected[j].cardranking == Players[i].hand[l].cardranking){
+                        Players[i].hand.splice(l, 1);    
+                    }
+                }
             }
             
             //Change Command position
@@ -845,9 +875,13 @@ function PlayCard(i) {
                 CardsonTable = [];
                 
                 ///Remove the card from Player's hand
-                for (let j = P0selectedcards.length -1; j >= 0; j--) {
+                for (let j = CardsSelected.length -1; j >= 0; j--) {
+                    for (let l = Players[i].hand.length - 1; l >= 0; l--) {
 
-                    Players[i].hand.splice(P0selectedcards[j],1);              
+                        if(CardsSelected[j].cardranking == Players[i].hand[l].cardranking){
+                            Players[i].hand.splice(l, 1);    
+                        }
+                    }
                 }
                 
                 //Change Command position
@@ -1064,7 +1098,6 @@ function CheckWinner(PlayerinTurn) {
             WinnerText(PlayerinTurn);
             ClearPlayerName()
             ClearCardsonTable();
-            RemoveTurnArrow();
             P0container.removeAllChildren();
             P1container.removeAllChildren();
             P2container.removeAllChildren();
@@ -1079,11 +1112,13 @@ function CheckWinner(PlayerinTurn) {
 
 function EndTurn(i) {
 
-    //Graphics: Deactivate Buttons
+    //Graphics: Deactivate Buttons and Highlight
     if (PlayerinTurn == 0) {
         DeactivateHitButton();
         DeactivatePassButton();
     }
+
+    ClearHighlight(PlayerinTurn);
     //
 
     Players[i].turn = false;
@@ -1100,9 +1135,12 @@ function EndTurn(i) {
     Round++
 
     //Graphics: Activate Buttons if it's Player 0 turn
-    TurnArrowPosition(PlayerinTurn);
+    HighlightPlayerName(PlayerinTurn);
 
     if (PlayerinTurn == 0) {
+        //Run Hit Activation test once just in case cards selected prior to P0's turn
+        ActivateHitConditions(P0selectedcards, CardsonTable);
+
         HitActivateListener ();
         ActivatePassButton(PlayerinTurn);
     }
