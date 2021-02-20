@@ -343,6 +343,20 @@ export default class AI {
             if (this.command == false) {
                 console.log("Heat | Follow")
                 cardsselected = this.Follow();
+
+                //Reserve bigger cards at only when too many stragglers
+                if ((cardsselected.length == 1) ||
+                (cardsselected.length == 2)) {
+
+                    if ((this.commandrate >= 0.9) &&
+                    (netsinglestraggling >= 2) &&
+                    (netpairstraggling >= 2)) {
+                        
+                        console.log("Heat | Reserved");
+                        return [];
+                    }
+                }
+
                 this.cardselected = cardsselected;
                 return this.cardselected;
             }             
