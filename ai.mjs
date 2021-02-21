@@ -134,7 +134,7 @@ export default class AI {
         return [];
     }
 
-    //Play highest valid ranking combination when follow
+    //Play lowest valid COMMANDER combination when follow
     Strike() {
 
         if ((this.cardsontable.length == 1) &&
@@ -142,8 +142,9 @@ export default class AI {
 
             let singles = this.analytics.analyzedhand[0][0];
 
-            for (let i = singles.length - 1; i >= 0; i--) {
-                if (singles[i][2] > this.cardsontableranking){
+            for (let i = 0 ; i <= singles.length - 1; i++) {
+                if ((singles[i][2] > this.cardsontableranking) &&
+                (singles[i][3] >= 0.9)){
                     this.commandrate = this.analytics.analyzedhand[0][0][i][3];
                     return this.analytics.analyzedhand[0][0][i][0];
                 }
@@ -155,8 +156,9 @@ export default class AI {
 
             let pairs = this.analytics.analyzedhand[1][0];
 
-            for (let i = pairs.length - 1; i >= 0; i--) {
-                if (pairs[i][2] > this.cardsontableranking){
+            for (let i = 0 ; i <= pairs.length - 1; i++) {
+                if ((pairs[i][2] > this.cardsontableranking) &&
+                (pairs[i][3] >= 0.9)){
                     this.commandrate = this.analytics.analyzedhand[1][0][i][3];
                     return this.analytics.analyzedhand[1][0][i][0];
                 }
@@ -168,8 +170,9 @@ export default class AI {
 
             let threes = this.analytics.analyzedhand[2][0];
 
-            for (let i = threes.length - 1; i >= 0; i--) {
-                if (threes[i][2] > this.cardsontableranking){
+            for (let i = 0 ; i <= threes.length - 1; i++) {
+                if ((threes[i][2] > this.cardsontableranking) &&
+                (threes[i][3] >= 0.9)){
                     this.commandrate = this.analytics.analyzedhand[2][0][i][3];
                     return this.analytics.analyzedhand[2][0][i][0];
                 }
@@ -181,8 +184,9 @@ export default class AI {
             
             let fives = this.analytics.analyzedhand[3][0];
 
-            for (let i = fives.length - 1; i >= 0; i--) {
-                if (fives[i][2] > this.cardsontableranking){
+            for (let i = 0 ; i <= fives.length - 1; i++) {
+                if ((fives[i][2] > this.cardsontableranking) &&
+                (fives[i][3] >= 0.9)){
                     this.commandrate = this.analytics.analyzedhand[3][0][i][3];
                     return this.analytics.analyzedhand[3][0][i][0];
                 }
@@ -191,6 +195,98 @@ export default class AI {
 
         return [];
     }
+
+    //Split Command Rate = 1 cards to gain command in Killer mode
+    KillerSplit() {
+        
+        var urgentrawhand = [];
+        var urgentcombinations = [];
+
+        //Split Pairs and Threes into Singles to execute Killer 
+        if (this.cardsontable.length == 1) {
+
+            var pairs = this.analytics.analyzedhand[1][0];
+            var threes = this.analytics.analyzedhand[2][0];
+
+            if(pairs.length !== 0){
+                for (let i = pairs.length - 1; i >= 0; i--) {
+
+                    //If absolute command combination is found
+                    if(pairs[i][3] == 1) {
+
+                        //Perform Strike() by pushing the lower card of Pair;
+                        urgentrawhand.push(pairs[i][0][0]);
+                        urgentcombinations = this.urgent.SingleCombinations(urgentrawhand);
+
+                        //Check if can hit
+                        if (urgentcombinations[0][2] > this.cardsontableranking){
+                            this.commandrate = urgentcombinations[0][3];
+                            console.log("Killer | Split");
+                            return urgentcombinations[0][0];
+                        }
+
+                    }
+                }
+            }
+
+            //If no Pairs to split then check Threes
+            if(threes.length !== 0){
+                for (let i = threes.length - 1; i >= 0; i--) {
+
+                    //If absolute command combination is found
+                    if(threes[i][3] == 1) {
+
+                        //Perform Strike() by pushing the lower card of Pair;
+                        urgentrawhand.push(threes[i][0][0]);
+                        urgentcombinations = this.urgent.SingleCombinations(urgentrawhand);
+
+                        //Check if can hit
+                        for (let j = 0 ; j <= urgentcombinations.length - 1; j++) {
+                            if (urgentcombinations[j][2] > this.cardsontableranking){
+
+                                this.commandrate = urgentcombinations[j][3];
+                                console.log("Killer | Split");
+                                return urgentcombinations[j][0];
+                            }
+                        }
+                    }
+                }
+            }            
+        }
+
+        //Split Threes into Pairs to execute Killer 
+        if (this.cardsontable.length == 2) {
+
+            var threes = this.analytics.analyzedhand[2][0];
+
+            if(threes.length !== 0){
+                for (let i = threes.length - 1; i >= 0; i--) {
+
+                    //If absolute command combination is found
+                    if(threes[i][3] == 1) {
+
+                        //Perform Strike() by pushing the lower card of Pair;
+                        urgentrawhand.push(threes[i][0][0], threes[i][0][1]);
+                        var urgentcardsbyvalue = this.urgent.CardsByValue(urgentrawhand);
+                        urgentcombinations = this.urgent.PairCombinations(urgentrawhand, urgentcardsbyvalue);
+
+                        //Check if can hit
+                        for (let j = 0 ; j <= urgentcombinations.length - 1; j++) {
+                            if (urgentcombinations[j][2] > this.cardsontableranking){
+                                this.commandrate = urgentcombinations[j][3];
+                                console.log("Killer | Split");
+                                return urgentcombinations[j][0];
+                            }
+                        }
+
+                    }
+                }
+            } 
+        }
+        return [];
+        
+    }
+
 
     //Analyze highest possible follow hit according to CardsonTable length
     Urgent() {
@@ -322,8 +418,14 @@ export default class AI {
             if (this.command == false) {
                 console.log("Killer | Strike")
                 cardsselected = this.Strike();
+
+                //Try Split if no valid result from Strike()
+                if (cardsselected.length == 0){
+                    cardsselected = this.KillerSplit();
+                }
                 this.cardselected = cardsselected;
                 return this.cardselected;
+                
             }  
 
         } 

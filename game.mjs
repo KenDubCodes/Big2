@@ -789,7 +789,7 @@ function Analyze(PlayerinTurn) {
         handcounts[0], handcounts[1], handcounts[2]);
 
     console.log("Player in Turn: ", Players[PlayerinTurn].ai);
-    console.log("AI Pick: ", cardsselected)
+    console.log("AI Pick: ", cardsselected);
 
     return cardsselected;
 

@@ -284,18 +284,32 @@ export default class Rules {
 
 }
 
-
-/* //For rule testing
+/*  
+//For rule testing
 var deck = new Deck()
 var rule = new Rules()
 
-var hit = []
+var hit = [
+    { name: '3♠', suit: '♠', value: 0, cardranking: 4 },
+    { name: '4♥', suit: '♥', value: 1, cardranking: 7 },
+    { name: '5♣', suit: '♣', value: 2, cardranking: 10 },
+    { name: 'A♦', suit: '♦', value: 11, cardranking: 45 },
+    { name: '2♠', suit: '♠', value: 12, cardranking: 52 }
+]
 
-var cardsonTable = []
+var cardsonTable = [
+    { name: '3♣', suit: '♣', value: 0, cardranking: 2 },
+    { name: '4♦', suit: '♦', value: 1, cardranking: 5 },
+    { name: '5♦', suit: '♦', value: 2, cardranking: 9 },
+    { name: '6♥', suit: '♥', value: 3, cardranking: 15 },
+    { name: '7♠', suit: '♠', value: 4, cardranking: 20 }
+]
 
 
-console.log("Is Straight: " )
+console.log("Compare Five: ", rule.CompareFive(hit, cardsonTable), 
+"Straight Ranking", rule.CardsontheTableRanking(hit))
 //console.log("Can Hit: " + rule.ValidHit(hit, cardsonTable))
 //console.log("Cards on Table: " + JSON.stringify(cardsonTable))
-//console.log("Hit: " + JSON.stringify(hit)) */
+//console.log("Hit: " + JSON.stringify(hit))
 
+  */
