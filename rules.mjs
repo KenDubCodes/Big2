@@ -47,11 +47,21 @@ export default class Rules {
         if (CardsSelected[lastcard - 4].value == 0 && CardsSelected[lastcard - 3].value == 1){
             if (CardsSelected[lastcard - 2].value == 2 && CardsSelected[lastcard - 1].value == 11) {
                 if (CardsSelected[lastcard].value == 12){
-                    //Rank card according to A instead of 2, and + 4 to rank above
-                    return [true, CardsSelected[lastcard - 1].cardranking + 4]
+                    //Rank card according to A instead of 2, and + 8 to rank above
+                    return [true, CardsSelected[lastcard - 1].cardranking + 8]
                 }
             }
         }
+
+        //Secondly, Check the special case of A Straight [2 3 4 5 6]
+        if (CardsSelected[lastcard - 4].value == 0 && CardsSelected[lastcard - 3].value == 1){
+            if (CardsSelected[lastcard - 2].value == 2 && CardsSelected[lastcard - 1].value == 3) {
+                if (CardsSelected[lastcard].value == 12){
+                    //Rank card according to A instead of 2, and + 8 to rank above
+                    return [true, fiveranking]
+                }
+            }
+        }        
 
         //Then Remove remaining Straight Ending with a 2
         if (CardsSelected[lastcard].value == 12) {
@@ -284,32 +294,31 @@ export default class Rules {
 
 }
 
-/*  
+/*    
 //For rule testing
 var deck = new Deck()
 var rule = new Rules()
 
 var hit = [
-    { name: '3♠', suit: '♠', value: 0, cardranking: 4 },
-    { name: '4♥', suit: '♥', value: 1, cardranking: 7 },
-    { name: '5♣', suit: '♣', value: 2, cardranking: 10 },
-    { name: 'A♦', suit: '♦', value: 11, cardranking: 45 },
-    { name: '2♠', suit: '♠', value: 12, cardranking: 52 }
+    { name: '3♥', suit: '♥', value: 0, cardranking: 3 },
+    { name: '4♠', suit: '♠', value: 1, cardranking: 8 },
+    { name: '5♠', suit: '♠', value: 2, cardranking: 12 },
+    { name: '6♠', suit: '♠', value: 3, cardranking: 16 },
+    { name: '2♥', suit: '♥', value: 12, cardranking: 51 }
 ]
 
 var cardsonTable = [
-    { name: '3♣', suit: '♣', value: 0, cardranking: 2 },
-    { name: '4♦', suit: '♦', value: 1, cardranking: 5 },
-    { name: '5♦', suit: '♦', value: 2, cardranking: 9 },
-    { name: '6♥', suit: '♥', value: 3, cardranking: 15 },
-    { name: '7♠', suit: '♠', value: 4, cardranking: 20 }
+    { name: '10♠', suit: '♠', value: 7, cardranking: 32 },
+    { name: 'J♠', suit: '♠', value: 8, cardranking: 36 },
+    { name: 'Q♥', suit: '♥', value: 9, cardranking: 39 },
+    { name: 'K♠', suit: '♠', value: 10, cardranking: 44 },
+    { name: 'A♠', suit: '♠', value: 11, cardranking: 48 },
 ]
 
 
-console.log("Compare Five: ", rule.CompareFive(hit, cardsonTable), 
-"Straight Ranking", rule.CardsontheTableRanking(hit))
+console.log("Valid Hit: ", rule.ValidHit(hit, cardsonTable),
+"Straight Ranking: ", rule.CardsontheTableRanking(hit));
 //console.log("Can Hit: " + rule.ValidHit(hit, cardsonTable))
 //console.log("Cards on Table: " + JSON.stringify(cardsonTable))
 //console.log("Hit: " + JSON.stringify(hit))
-
-  */
+ */

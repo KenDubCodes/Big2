@@ -224,8 +224,8 @@ export default class Analytics {
             var lastcard = Cards.length - 1;
             for (let i = lastcard; i >= 4; i--) {
 
-                var straight = [];
-                var ivalue = Cards[i].value;
+                let straight = [];
+                let ivalue = Cards[i].value;
 
                 if ( (ivalue - 4 >= 0) &&
                 (CardsbyValue[ivalue - 4].length !== 0) &&
@@ -251,30 +251,35 @@ export default class Analytics {
             }
 
             //Remove Straight Ends with 2
-            for (let i = result.length - 1; i >= 0 ; i--) {
-                if (result[i][0][4].value == 12) {
-            
-                        result.splice(i, 1)
+            if (result.length > 0) {
+                for (let i = result.length - 1; i >= 0 ; i--) {
+                    if (result[i][0][4].value == 12) {
+                
+                            result.splice(i, 1);
+                    }
                 }
+                result.sort((a, b) => a[2] - b[2]);
             }
 
+
             //Add Back the special case of "3,4,5,2,A"
-            for (let i = lastcard; i >= 4; i--) {
+            for (let i = 0; i <= lastcard; i++) {
 
-                var straight = [];
-                var ivalue = Cards[i].value;
+                let straight = [];
+                let ivalue = Cards[i].value;
 
-                if ( (ivalue == 11) &&
+                if ((ivalue == 11) &&
                 (CardsbyValue[0].length !== 0) &&
                 (CardsbyValue[1].length !== 0) &&
                 (CardsbyValue[2].length !== 0) &&
                 (CardsbyValue[12].length !== 0)) {
+                    
                     straight.push(
                         CardsbyValue[0][0],
                         CardsbyValue[1][0],
                         CardsbyValue[2][0],
-                        CardsbyValue[12][0],
-                        Cards[i]
+                        Cards[i],
+                        CardsbyValue[12][0]
                     )
 
                     var variations = CardsbyValue[0].length *
@@ -282,11 +287,42 @@ export default class Analytics {
                     CardsbyValue[2].length *
                     CardsbyValue[12].length
                     
-                    //Boost Card Ranking of this case by 4 to go above 10JQKA
-                    result.push([straight, variations, Cards[i].cardranking + 4])
+                    //Boost Card Ranking of this case by 8 to go above 10JQKA
+                    result.push([straight, variations, Cards[i].cardranking + 8])
                     result.sort((a, b) => a[2] - b[2]);
                 }
             }
+
+            //Add Back the special case of "3,4,5,6,2"
+            for (let i = 0; i <= lastcard; i++) {
+
+                let straight = [];
+                let ivalue = Cards[i].value;
+
+                if ((ivalue == 12) &&
+                (CardsbyValue[0].length !== 0) &&
+                (CardsbyValue[1].length !== 0) &&
+                (CardsbyValue[2].length !== 0) &&
+                (CardsbyValue[3].length !== 0)) {
+                    
+                    straight.push(
+                        CardsbyValue[0][0],
+                        CardsbyValue[1][0],
+                        CardsbyValue[2][0],
+                        CardsbyValue[3][0],
+                        Cards[i],
+                    )
+
+                    var variations = CardsbyValue[0].length *
+                    CardsbyValue[1].length *
+                    CardsbyValue[2].length *
+                    CardsbyValue[3].length
+                    
+                    //Boost Card Ranking of this case by 4 to go above 10JQKA
+                    result.push([straight, variations, Cards[i].cardranking]);
+                    result.sort((a, b) => a[2] - b[2]);
+                }
+            }            
         }
 
         return result
@@ -573,6 +609,8 @@ export default class Analytics {
         this.straightcombinations = 
         this.StraightCombinations(this.remainingdeck, this.cardsbyvalue);
 
+        //console.log("all straightcombinations: ", this.straightcombinations);
+
         this.flushcombinations = 
         this.FlushCombinations(this.remainingdeck, this.cardsbysuit);
 
@@ -615,6 +653,8 @@ export default class Analytics {
 
         this.handstraightcombinations = 
         this.StraightCombinations(this.hand, this.handcardsbyvalue);
+
+        //console.log("handstraightcombinations: ", this.handstraightcombinations);
 
         this.handflushcombinations = 
         this.FlushCombinations(this.hand, this.handcardsbysuit);
@@ -831,7 +871,6 @@ export default class Analytics {
         highestsingle.push(Cards[Cards.length - 1]);
 
         //console.log("Before Slicing ", Cards)
-        //console.log("Hand Straight Comb: ", this.handstraightcombinations)
 
         //Part 1: General Splicing
         while(Cards.length > 0) {
@@ -1330,32 +1369,24 @@ export default class Analytics {
 }
 
 
-/*  
+/* 
 //For Analytics Testing
 var deck = new Deck();
 var rule = new Rules();
 deck.shuffle();
 
 var hand = [
-{name: "3♦", suit: "♦", value: 0, cardranking: 1},
-{name: "3♥", suit: "♥", value: 0, cardranking: 3},
-{name: "3♠", suit: "♠", value: 0, cardranking: 4},
-{name: "4♣", suit: "♣", value: 1, cardranking: 6},
-{name: "6♦", suit: "♦", value: 3, cardranking: 13},
-{name: "7♣", suit: "♣", value: 4, cardranking: 18},
-{name: "9♣", suit: "♣", value: 6, cardranking: 26},
-{name: "10♥", suit: "♥", value: 7, cardranking: 31},
-{name: "J♥", suit: "♥", value: 8, cardranking: 35},
-{name: "K♣", suit: "♣", value: 10, cardranking: 42},
-{name: "A♥", suit: "♥", value: 11, cardranking: 47},
-{name: "2♦", suit: "♦", value: 12, cardranking: 49},
-{name: "2♠", suit: "♠", value: 12, cardranking: 52},
+    { name: '3♦', suit: '♦', value: 0, cardranking: 1 },
+    { name: '4♥', suit: '♥', value: 1, cardranking: 7 },
+    { name: '5♥', suit: '♥', value: 2, cardranking: 11 },
+    { name: '6♥', suit: '♥', value: 3, cardranking: 15 },
+    { name: '2♦', suit: '♦', value: 12, cardranking: 49 }
 ];
 
 for (let i = 0;  i <= 12; i++) {
 
     hand.push(deck.draw());
-}  
+}
 
 hand.sort((a, b) => a.cardranking - b.cardranking) 
 
@@ -1380,14 +1411,15 @@ analytics.UpdateCardsLeft(CardsonTable);
 //Analyse all remaining combinations
 analytics.UpdateRemainingCombinations();
 
+
 analytics.AnalyzeHand(hand, HandCount1, HandCount2, HandCount3);
 
 
-console.log("Analyzed Hand [Singles, Pairs, Threes, Fives]: ", analytics.analyzedhand); 
+console.log("Analyzed Hand [Singles, Pairs, Threes, Fives]: ", JSON.stringify(analytics.analyzedhand)); 
 
 console.log("Straggling Singles: ", analytics.stragglingsingles,
 "Straggling Pairs: ", analytics.stragglingpairs,
 "Commanding Singles: ", analytics.commandingsingles,
-"Commanding Pairs: ", analytics.commandingpairs); */
- 
+"Commanding Pairs: ", analytics.commandingpairs); 
+  */
 

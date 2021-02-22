@@ -779,7 +779,7 @@ function Analyze(PlayerinTurn) {
             handcounts.push(Players[p].hand.length);
         }
     }
-    console.log("Hand Counts:", handcounts)
+    console.log("Hand Counts:", handcounts);
 
     Players[PlayerinTurn].analytics.AnalyzeHand(
         Players[PlayerinTurn].hand, 
@@ -836,7 +836,8 @@ function PlayCard(i) {
             
             //If Selected Card matches the rules
             CardsonTable = CardsonTable.concat(CardsSelected);
-            CardsonTableRanking = rule.CardsontheTableRanking(CardsonTable)
+            CardsonTableRanking = rule.CardsontheTableRanking(CardsSelected);
+            console.log("CardsonTableRanking: ", CardsonTableRanking);
 
             //Update Analytics
             for (let k = 0; k <= 3; k++){
@@ -891,8 +892,9 @@ function PlayCard(i) {
         
                 
                 //If Selected Card matches the rules
-                CardsonTable = CardsonTable.concat(CardsSelected)
-                CardsonTableRanking = rule.CardsontheTableRanking(CardsonTable)
+                CardsonTable = CardsonTable.concat(CardsSelected);
+                CardsonTableRanking = rule.CardsontheTableRanking(CardsSelected);
+                console.log("CardsonTableRanking: ", CardsonTableRanking);
 
                 //Update Analytics
                 for (let k = 0; k <= 3; k++){
@@ -955,11 +957,12 @@ function AIPlay(PlayerinTurn, CardsSelected) {
         //Change Command position
         Players[PlayerinCommand].command = false;
         PlayerinCommand = PlayerinTurn;
-        Players[PlayerinTurn].command = true
+        Players[PlayerinTurn].command = true;
               
         //If Selected Card matches the rules
-        CardsonTable = CardsonTable.concat(CardsSelected)
-        CardsonTableRanking = rule.CardsontheTableRanking(CardsonTable)
+        CardsonTable = CardsonTable.concat(CardsSelected);
+        CardsonTableRanking = rule.CardsontheTableRanking(CardsSelected);
+        console.log("CardsonTableRanking: ", CardsonTableRanking);
 
         //Update Analytics
         for (let k = 0; k <= 3; k++){
@@ -996,7 +999,7 @@ function AIPlay(PlayerinTurn, CardsSelected) {
             Players[3].hand.length)
         //
 
-        console.log("Cards on able: ", CardsonTable);
+        console.log("Cards on Table: ", CardsonTable);
 
         CheckWinner(PlayerinTurn);
 

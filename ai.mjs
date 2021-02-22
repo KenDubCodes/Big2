@@ -123,6 +123,8 @@ export default class AI {
             
             let fives = this.analytics.analyzedhand[3][0];
 
+            console.log("AI cardsontableranking: ", this.cardsontableranking);
+
             for (let i = 0; i <= fives.length - 1; i++) {
                 if (fives[i][2] > this.cardsontableranking){
                     this.commandrate = this.analytics.analyzedhand[3][0][i][3];
