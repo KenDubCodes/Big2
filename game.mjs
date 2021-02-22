@@ -51,6 +51,7 @@ var manifest = [
 //1. Initialize
 var stage = new createjs.Stage("GameCanvas");
 
+
 //Tickers
 createjs.Ticker.timingMode = createjs.Ticker.RAF_SYNCHED;
 createjs.Ticker.addEventListener("tick", stage);
@@ -65,6 +66,8 @@ background.graphics.beginLinearGradientFill(["#229954", "#1E8449"], [0.05, 1],
 background.x = 0;
 background.y = 0;
 background.name = "background";
+var bgwidth = background.graphics.command.w;
+var bgheight = background.graphics.command.h;
 stage.addChild(background);
 
 //Loading Text
@@ -72,10 +75,12 @@ var loadingcontainer = new createjs.Container();
 stage.addChild(loadingcontainer);
 
 var loadingtext = new createjs.Text("Loading...", "30px Copperplate", "#FFFFFF");
-loadingtext.x = 480;
-loadingtext.y = 360;
+loadingtext.x = 0;
+loadingtext.y = 0;
 loadingtext.textBaseline = "alphabetic";
 loadingcontainer.addChild(loadingtext);
+loadingcontainer.x = (bgwidth - loadingtext.getBounds().width) / 2;
+loadingcontainer.y = (bgheight - loadingtext.getBounds().height) / 2;
 
 //Start Screen
 var StartScreenContainer = new createjs.Container();
@@ -92,10 +97,12 @@ function AddStartScreen(){
 
     var startscreen = new createjs.Bitmap(loader.getResult("startscreen"));
     startscreen.shadow = new createjs.Shadow("#424949", 5, 5, 10);
-    startscreen.x = 140;
-    startscreen.y = 60;
+    startscreen.x = 0;
+    startscreen.y = 0;
     startscreen.name = "startscreen";
     StartScreenContainer.addChild(startscreen); 
+    StartScreenContainer.x = (bgwidth - startscreen.getBounds().width) / 2;
+    StartScreenContainer.y = (bgheight - startscreen.getBounds().height) / 2;
 }
 
 function RemoveStartScreen() {
@@ -109,8 +116,8 @@ stage.addChild(WinnerScreenContainer);
 function AddWinnerScreen() {
 
     var winnerscreen = new createjs.Bitmap(loader.getResult("winner"));
-    winnerscreen.x = 140;
-    winnerscreen.y = 60;
+    winnerscreen.x = (bgwidth - winnerscreen.getBounds().width) / 2;
+    winnerscreen.y = (bgheight - winnerscreen.getBounds().height) / 2;
     winnerscreen.name = "winnerscreen";
     WinnerScreenContainer.addChild(winnerscreen); 
 
@@ -170,21 +177,27 @@ stage.addChild(P3NameContainer);
 
 
 //Define functions to display each player's cards
+
 var P0HandSelectCheck = [];
 function DisplayP0Hand(hand) {
+    var cardface = new createjs.Bitmap(loader.getResult("2♠"));
+    var cardfacewidth = cardface.getBounds().width;
+
     var cards = [];
-    var align = 465 - (hand.length * 20);
+    var align = ((bgwidth - cardfacewidth) / 2) - ((hand.length - 1) * bgwidth / 54);
     var count = 0;
     for (let n = 0; n <= hand.length - 1; n++) {
         P0HandSelectCheck.push(false);
-        count += 40;
+        count += bgwidth / 27;
         cards.push(new createjs.Bitmap(loader.getResult(hand[n].name)));
-        cards[n].scale = 0.7;
+
+        //Card Scale need to reevaluated if DIFFERENT ASPECT card face uploaded
+        cards[n].scale = bgwidth * 0.1 / cardfacewidth;
         cards[n].x = align + count;
-        cards[n].y = 520;
+        cards[n].y = bgheight * 13/18;
         cards[n].name = n;
         P0container.addChild(cards[n]);
-    } 
+    }
 }
 
 //Selection Function to pick cards
@@ -196,22 +209,22 @@ function P0SelectedCards () {
         let card = P0container.children[i];
         card.addEventListener("click", function(event) {
       
-            if (card.y == 520) {
+            if (card.y == bgheight * 13/18) {
 
                 P0selectedcards.push(P0container.children.indexOf(card));
-                card.y = 480;
+                card.y = bgheight * 12/18;
                 console.log("P0selectedcards: ", P0selectedcards);
                 return;
             }
 
-            if (card.y == 480) {
+            if (card.y == bgheight * 12/18) {
 
                 for (let n = P0selectedcards.length - 1; n >= 0; n--) {
                     if (P0selectedcards[n] == i){
                         P0selectedcards.splice(n, 1);
                     }
                 }
-                card.y = 520;
+                card.y = bgheight * 13/18;
                 console.log("P0selectedcards: ", P0selectedcards)
                 return;
             }
@@ -233,17 +246,21 @@ function HitActivateListener () {
 
 
 function createP1CardBack(i) {
-
+    var cardback = new createjs.Bitmap(loader.getResult("cardback"));
+    var cardbackwidth = cardback.getBounds().width;
+    
     var show = i - 1;
-    var align = 310 - (i*10);
+    var align = ((bgheight - cardbackwidth) / 2) - (i * bgheight / 72);
     if (show >= 0){
         var cardbacks = [];
         var count = 0;
         for (let n = 0; n <= show; n++) {
-            count += 25;
+            count += cardbackwidth / 5;
             cardbacks.push(new createjs.Bitmap(loader.getResult("cardback")));
-            cardbacks[n].scale = 0.6;
-            cardbacks[n].x = 925;
+
+            //Card Scale need to reevaluated if DIFFERENT ASPECT card face uploaded
+            cardbacks[n].scale = (bgwidth * 5/72) / cardbackwidth;
+            cardbacks[n].x = bgwidth * 925 / 1080;
             cardbacks[n].y = align + count;
             cardbacks[n].rotation = 270;
             P1container.addChild(cardbacks[n]);
@@ -252,18 +269,21 @@ function createP1CardBack(i) {
 }
 
 function createP2CardBack(i) {
+    
+    var cardback = new createjs.Bitmap(loader.getResult("cardback"));
+    var cardbackwidth = cardback.getBounds().width;
 
     var show = i - 1;
-    var align = 465 - (i*10);
+    var align = ((bgwidth - cardbackwidth) / 2) - (i * bgwidth / 108);;
     if(show >= 0); {
         var cardbacks = [];
         var count = 0;
         for (let n = 0; n <= show; n++) {
-            count += 25;
+            count += cardbackwidth / 5;
             cardbacks.push(new createjs.Bitmap(loader.getResult("cardback")));
-            cardbacks[n].scale = 0.6;
+            cardbacks[n].scale = (bgwidth * 5/72) / cardbackwidth;
             cardbacks[n].x = align + count;
-            cardbacks[n].y = 20;
+            cardbacks[n].y = bgheight / 36;
             P2container.addChild(cardbacks[n]);
         } 
     }
@@ -272,16 +292,19 @@ function createP2CardBack(i) {
 
 function createP3CardBack(i) {
 
+    var cardback = new createjs.Bitmap(loader.getResult("cardback"));
+    var cardbackwidth = cardback.getBounds().width;
+
     var show = i - 1;
-    var align = 240 - (i*10);
+    var align = ((bgheight - cardbackwidth) * 0.4) - (i * bgwidth / 108);
     if(show >= 0) {
         var cardbacks = [];
         var count = 0;
         for (let n = 0; n <= show; n++) {
-            count += 25;
+            count += cardbackwidth / 5;
             cardbacks.push(new createjs.Bitmap(loader.getResult("cardback")));
-            cardbacks[n].scale = 0.6;
-            cardbacks[n].x = 150;
+            cardbacks[n].scale = (bgwidth * 5/72) / cardbackwidth;
+            cardbacks[n].x = bgwidth * 5 / 36;
             cardbacks[n].y = align + count;
             cardbacks[n].rotation = 90;
             P3container.addChild(cardbacks[n]);
@@ -298,64 +321,88 @@ function DisplayHandCount(HandCount1, HandCount2, HandCount3) {
 //Define the Cards on Table Areas
 function P0CardsonTable(CardsonTable) {
 
+    var cardface = new createjs.Bitmap(loader.getResult("2♠"));
+    var cardfacewidth = cardface.getBounds().width;
+
     var P0hits = [];
+    var align = ((bgwidth - cardfacewidth) / 2) - ((CardsonTable.length - 1) * bgwidth / 54);
     var count = 0;
-    var align = 475 - (CardsonTable.length*20);
+
     for (let i = 0; i <= CardsonTable.length - 1; i++){
-        count += 45;
+
+        count += cardfacewidth * 45 / 167;
         P0hits.push(new createjs.Bitmap(loader.getResult(CardsonTable[i])));
         P0hits[i].scale = 0.55;
         P0hits[i].x = align + count;
-        P0hits[i].y = 320;
+        P0hits[i].y = bgheight * 4/9;
         P0CardsonTablecontainer.addChild(P0hits[i]);
     }
 }
 
 function P1CardsonTable(CardsonTable) {
 
+    var cardface = new createjs.Bitmap(loader.getResult("2♠"));
+    var cardfacewidth = cardface.getBounds().width;
+
     var P1hits = [];
+    //Divide by 2.25 but not 2 to leave more room for Player 0 to pick cards
+    var align = (bgheight + cardfacewidth) / 2.25 + ((CardsonTable.length - 1) * bgheight / 28.8);
     var count = 0;
-    var align = 385 + (CardsonTable.length*25);
     for (let i = 0; i <= CardsonTable.length - 1; i++){
-        count += 45;
+
+        count -= cardfacewidth * 45 / 167;
         P1hits.push(new createjs.Bitmap(loader.getResult(CardsonTable[i])));
         P1hits[i].scale = 0.55;
-        P1hits[i].x = 765;
-        P1hits[i].y = align - count;
+        P1hits[i].x = bgwidth * 17 / 24;
+        P1hits[i].y = align + count;
         P1hits[i].rotation = 270;
         P1CardsonTablecontainer.addChild(P1hits[i]);
+
     }
 }
 
 function P2CardsonTable(CardsonTable) {
 
+    var cardface = new createjs.Bitmap(loader.getResult("2♠"));
+    var cardfacewidth = cardface.getBounds().width;
+
     var P2hits = [];
+    var align = ((bgwidth - cardfacewidth) / 2) - ((CardsonTable.length - 1) * bgwidth / 54);
     var count = 0;
-    var align = 475 - (CardsonTable.length*20);
+
     for (let i = 0; i <= CardsonTable.length - 1; i++){
-        count += 45;
+        count += cardfacewidth * 45 / 167;
         P2hits.push(new createjs.Bitmap(loader.getResult(CardsonTable[i])));
         P2hits[i].scale = 0.55;
         P2hits[i].x = align + count;
-        P2hits[i].y = 170;
+        P2hits[i].y = bgheight / 4.235
         P2CardsonTablecontainer.addChild(P2hits[i]);
+
     }
 }
 
 function P3CardsonTable(CardsonTable) {
 
+    var cardface = new createjs.Bitmap(loader.getResult("2♠"));
+    var cardfacewidth = cardface.getBounds().width;
+
     var P3hits = [];
+    // divide by 2.5 but not 2 to leave more room for Player 0 pick cards
+    var align = (bgheight - cardfacewidth) / 2.5 - ((CardsonTable.length - 1) * bgheight / 28.8);
     var count = 0;
-    var align = 245 - (CardsonTable.length*20);
+
+    //var align = 245 - (CardsonTable.length*20);
     for (let i = 0; i <= CardsonTable.length - 1; i++){
-        count += 45;
+        count += cardfacewidth * 45 / 167;
         P3hits.push(new createjs.Bitmap(loader.getResult(CardsonTable[i])));
         P3hits[i].scale = 0.55;
-        P3hits[i].x = 310;
+        P3hits[i].x = bgwidth * 5 / 18;
         P3hits[i].y = align + count;
         P3hits[i].rotation = 90;
         P3CardsonTablecontainer.addChild(P3hits[i]);
+
     }
+
 }
 
 function TextPass(PlayerinTurn) {
@@ -364,8 +411,8 @@ function TextPass(PlayerinTurn) {
     if (PlayerinTurn == 0) {
         P0CardsonTablecontainer.removeAllChildren();
     
-        textpass.x = 485;
-        textpass.y = 450;
+        textpass.x = (bgwidth - textpass.getBounds().width) / 2;;
+        textpass.y = bgheight * 0.625;
         textpass.textBaseline = "alphabetic";
         P0CardsonTablecontainer.addChild(textpass);
     }
@@ -373,27 +420,29 @@ function TextPass(PlayerinTurn) {
     if (PlayerinTurn == 1) {
         P1CardsonTablecontainer.removeAllChildren();
 
-        textpass.x = 890;
-        textpass.y = 380;
+        textpass.x = bgwidth * 5 / 6;
+        textpass.y = (bgheight + textpass.getBounds().width) / 2.25;
         textpass.rotation = 270;
         textpass.textBaseline = "alphabetic";
         P1CardsonTablecontainer.addChild(textpass);
+
     }
 
     if (PlayerinTurn == 2) {
         P2CardsonTablecontainer.removeAllChildren();
 
-        textpass.x = 485;
-        textpass.y = 215;
+        textpass.x = (bgwidth - textpass.getBounds().width) / 2;;
+        textpass.y = bgheight * 215 / 720;
         textpass.textBaseline = "alphabetic";
         P2CardsonTablecontainer.addChild(textpass);
+
     }
 
     if (PlayerinTurn == 3) {
         P3CardsonTablecontainer.removeAllChildren();
 
-        textpass.x = 185;
-        textpass.y = 250;
+        textpass.x = bgwidth * 180 / 1080;
+        textpass.y = bgheight / 3 ;
         textpass.rotation = 90;
         textpass.textBaseline = "alphabetic";
         P3CardsonTablecontainer.addChild(textpass);
@@ -420,32 +469,32 @@ function ClearCardsonTable(){
 function CreatePlayerName(){
 var P0name = new createjs.Text("YOU", "45px Copperplate", "#FFFFFF");
 P0name.shadow = new createjs.Shadow("#424949", 3, 3, 10);
-P0name.x = 110;
-P0name.y = 680;
+P0name.x = bgwidth *  120 / 1080;
+P0name.y = bgheight * 670 / 720;
 P0name.name = "P0name";
 P0name.textBaseline = "alphabetic";
 P0NameContainer.addChild(P0name);
 
 var P1name = new createjs.Text("P1", "35px Copperplate", "#FFFFFF");
 P1name.shadow = new createjs.Shadow("#424949", 3, 3, 10);
-P1name.x = 920;
-P1name.y = 110;
+P1name.x = bgwidth * 925 / 1080;
+P1name.y = bgheight * 100 / 720;
 P1name.name = "P1name";
 P1name.textBaseline = "alphabetic";
 P1NameContainer.addChild(P1name);
 
 var P2name = new createjs.Text("P2", "35px Copperplate", "#FFFFFF");
 P2name.shadow = new createjs.Shadow("#424949", 3, 3, 10);
-P2name.x = 270;
-P2name.y = 50;
+P2name.x = bgwidth * 270 / 1080;
+P2name.y = bgheight * 55 / 720;
 P2name.name = "P2name";
 P2name.textBaseline = "alphabetic";
 P2NameContainer.addChild(P2name);
 
 var P3name = new createjs.Text("P3", "35px Copperplate", "#FFFFFF");
 P3name.shadow = new createjs.Shadow("#424949", 3, 3, 10);
-P3name.x = 25;
-P3name.y = 560;
+P3name.x = bgwidth * 25 / 1080;
+P3name.y = bgheight * 560 / 720;
 P3name.name = "P3name";
 P3name.textBaseline = "alphabetic";
 P3NameContainer.addChild(P3name);
@@ -557,7 +606,7 @@ PassButtonActivated = false;
 function ActivateHitButton() {
     var hitbox = ButtonHit.getChildByName("hitbox");
     hitbox.graphics.clear().beginLinearGradientFill(["#F1C40F", "#B7950B"], [0.05, 1],
-    0, 0, 0, 120).drawRect(0, 0, 170, 75);
+    0, 0, 0, 120).drawRoundRectComplex(0, 0, 170, 75, 10, 10, 10, 10);
     hitbox.shadow = new createjs.Shadow("#424949", 3, 3, 5);
     hitbox.x = 880;
     hitbox.y = 525;
@@ -578,7 +627,7 @@ function ActivatePassButton(PlayerinTurn) {
 
         var passbox = ButtonPass.getChildByName("passbox");
         passbox.graphics.clear().beginLinearGradientFill(["#2980B9", "#1F618D"], [0.05, 1],
-        0, 0, 0, 120).drawRect(0, 0, 170, 75);
+        0, 0, 0, 120).drawRoundRectComplex(0, 0, 170, 75, 10, 10, 10, 10);
         passbox.shadow = new createjs.Shadow("#424949", 3, 3, 5);
         passbox.x = 880;
         passbox.y = 615;  
@@ -597,7 +646,7 @@ function DeactivateHitButton() {
 
     if (HitButtonActivated == true) {
         var hitbox = ButtonHit.getChildByName("hitbox");
-        hitbox.graphics.clear().beginFill("#85929E").drawRect(0, 0, 170, 75);
+        hitbox.graphics.clear().beginFill("#85929E").drawRoundRectComplex(0, 0, 170, 75, 10, 10, 10, 10);
         hitbox.shadow = new createjs.Shadow("#424949", 3, 3, 5);
         hitbox.x = 880;
         hitbox.y = 525;
@@ -611,7 +660,7 @@ function DeactivatePassButton() {
 
     if (PassButtonActivated == true) {
         var passbox = ButtonPass.getChildByName("passbox");
-        passbox.graphics.clear().beginFill("#85929E").drawRect(0, 0, 170, 75);
+        passbox.graphics.clear().beginFill("#85929E").drawRoundRectComplex(0, 0, 170, 75, 10, 10, 10, 10);
         passbox.shadow = new createjs.Shadow("#424949", 3, 3, 5);
         passbox.x = 880;
         passbox.y = 615;  
@@ -627,15 +676,19 @@ var ButtonStart = new createjs.Container();
 function CreatStartButton(){
     var startbox = new createjs.Shape();
     startbox.graphics.beginLinearGradientFill(["#CB4335", "#B03A2E"], [0.05, 1],
-    0, 0, 0, 120).drawRoundRectComplex(0, 0, 200, 120, 10, 10, 10, 10);
+    0, 0, 0, 120).drawRoundRectComplex(0, 0, bgwidth / 6, bgheight / 6, 10, 10, 10, 10);
     startbox.shadow = new createjs.Shadow("#424949", 3, 3, 5);
-    startbox.x = 640;
-    startbox.y = 390;
+    var startboxwidth = startbox.graphics.command.w;
+    var startboxheight = startbox.graphics.command.h;
+    startbox.x = (bgwidth - startboxwidth) / 1.4;
+    startbox.y = (bgheight - startboxheight) / 1.4;
     startbox.name = "startbox";
     ButtonStart.addChild(startbox);
     var starttext = new createjs.Text("Start", "40px Copperplate", "#FFFFFF");
-    starttext.x = 685;
-    starttext.y = 460;
+    starttext.x = 
+    startbox.x + (startboxwidth - starttext.getBounds().width) / 2;
+    starttext.y = 
+    startbox.y + (startboxheight - starttext.getBounds().height)/1.15;
     starttext.textBaseline = "alphabetic";
     ButtonStart.addChild(starttext);
     stage.addChild(ButtonStart);
