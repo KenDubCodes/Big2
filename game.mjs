@@ -17,8 +17,25 @@ P0NameContainer, P1NameContainer, P2NameContainer, P3NameContainer,
 HitButtonActivated, PassButtonActivated;
 
 var manifest = [
-    {"src": "startscreen.jpg", "id": "startscreen"},
-    {"src": "winner.jpg", "id": "winner"},
+    {"src": "startscreen.png", "id": "startscreen"},
+    {"src": "startbutton.png", "id": "startbutton"},
+    {"src": "startbuttonclicked.png", "id": "startbuttonclicked"},
+    {"src": "hitbutton.png", "id": "hitbutton"},
+    {"src": "hitbuttonclicked.png", "id": "hitbuttonclicked"},
+    {"src": "hitbuttondeactivated.png", "id": "hitbuttondeactivated"},
+    {"src": "passbutton.png", "id": "passbutton"},
+    {"src": "passbuttonclicked.png", "id": "passbuttonclicked"},
+    {"src": "passbuttondeactivated.png", "id": "passbuttondeactivated"},
+    {"src": "P0name.png", "id": "P0name"}, {"src": "P1name.png", "id": "P1name"},
+    {"src": "P2name.png", "id": "P2name"}, {"src": "P3name.png", "id": "P3name"},
+    {"src": "P0namehighlighted.png", "id": "P0namehighlighted"}, 
+    {"src": "P1namehighlighted.png", "id": "P1namehighlighted"}, 
+    {"src": "P2namehighlighted.png", "id": "P2namehighlighted"}, 
+    {"src": "P3namehighlighted.png", "id": "P3namehighlighted"}, 
+    {"src": "passtext.png", "id": "passtext"},
+    {"src": "winner.png", "id": "winner"},
+    {"src": "P0win.png", "id": "P0win"},{"src": "P1win.png", "id": "P1win"},
+    {"src": "P2win.png", "id": "P2win"},{"src": "P3win.png", "id": "P3win"},
     {"src": "cardback.jpg", "id": "cardback"},
     {"src": "2♠.png", "id": "2♠"},{"src": "2♣.png", "id": "2♣"},
     {"src": "2♥.png", "id": "2♥"},{"src": "2♦.png", "id": "2♦"},
@@ -50,6 +67,7 @@ var manifest = [
 
 //1. Initialize
 var stage = new createjs.Stage("GameCanvas");
+stage.enableMouseOver(20);
 
 
 //Tickers
@@ -61,8 +79,10 @@ loader.addEventListener("complete", handleComplete);
 loader.loadManifest(manifest, true, "./images/");
 
 var background = new createjs.Shape();
-background.graphics.beginLinearGradientFill(["#229954", "#1E8449"], [0.05, 1],
-0, 0, 0, 720).drawRect(0, 0, 1080, 720);
+background.graphics.beginRadialGradientFill(["#2E7D32", "#F2E64E"], [0.05, 1],
+1080/2, 720/2, 1080/1.5, 1080/2, 720/2, 0).drawRect(0, 0, 1080, 720);
+/* background.graphics.beginLinearGradientFill(["#229954", "#1E8449"], [0.05, 1],
+0, 0, 0, 720).drawRect(0, 0, 1080, 720); */
 background.x = 0;
 background.y = 0;
 background.name = "background";
@@ -84,60 +104,82 @@ loadingcontainer.y = (bgheight - loadingtext.getBounds().height) / 2;
 
 //Start Screen
 var StartScreenContainer = new createjs.Container();
-stage.addChild(StartScreenContainer);
+stage.addChildAt(StartScreenContainer, 1);
 
 //Add Start Screen and Start Button
 function handleComplete() {
     loadingcontainer.removeAllChildren();
     AddStartScreen();
-    CreatStartButton();
+    CreatStartButton(StartScreenContainer);
+    StartScreenContainer.addChild(ButtonStart);
+    ShowScreenAnimate(StartScreenContainer);
 }
 
 function AddStartScreen(){
 
     var startscreen = new createjs.Bitmap(loader.getResult("startscreen"));
-    startscreen.shadow = new createjs.Shadow("#424949", 5, 5, 10);
+    startscreen.shadow = new createjs.Shadow("#424949", 1, 1, 10);
     startscreen.x = 0;
     startscreen.y = 0;
     startscreen.name = "startscreen";
-    StartScreenContainer.addChild(startscreen); 
+    StartScreenContainer.addChild(startscreen);
     StartScreenContainer.x = (bgwidth - startscreen.getBounds().width) / 2;
-    StartScreenContainer.y = (bgheight - startscreen.getBounds().height) / 2;
+    StartScreenContainer.y = bgheight;
 }
 
 function RemoveStartScreen() {
     StartScreenContainer.removeAllChildren();
 }
 
+function ShowScreenAnimate(ScreenContainer) {
+    createjs.Tween.get(ScreenContainer)
+    .to({y: (bgheight - ScreenContainer.getBounds().height) / 2 - bgheight/36}, 
+        800, createjs.Ease.getPowInOut(3))
+    .to({y: (bgheight - ScreenContainer.getBounds().height) / 2}
+        , 200, createjs.Ease.getPowInOut(3))    
+}
+
+function QuitScreenAnimate(ScreenContainer) {
+    createjs.Tween.get(ScreenContainer)
+    .to({y: (bgheight - ScreenContainer.getBounds().height) / 2 - bgheight/36}
+        , 200, createjs.Ease.getPowInOut(3))
+    .to({y: bgheight}, 800,
+        createjs.Ease.getPowInOut(3));
+}
+
+
 //Winner Screen
 var WinnerScreenContainer = new createjs.Container();
-stage.addChild(WinnerScreenContainer);
+stage.addChildAt(WinnerScreenContainer, 2);
 
 function AddWinnerScreen() {
 
     var winnerscreen = new createjs.Bitmap(loader.getResult("winner"));
-    winnerscreen.x = (bgwidth - winnerscreen.getBounds().width) / 2;
-    winnerscreen.y = (bgheight - winnerscreen.getBounds().height) / 2;
+    winnerscreen.shadow = new createjs.Shadow("#424949", 5, 5, 10);
+    winnerscreen.x = 0;
+    winnerscreen.y = 0;
     winnerscreen.name = "winnerscreen";
     WinnerScreenContainer.addChild(winnerscreen); 
-
+    WinnerScreenContainer.x = (bgwidth - winnerscreen.getBounds().width) / 2;
+    WinnerScreenContainer.y = bgheight;
 }
 
 function WinnerText(PlayerinTurn){
+
     if (PlayerinTurn == 0) {
-        var wintext = new createjs.Text("YOU WIN", "70px Copperplate", "#FFFFFF");
+        var wintext = new createjs.Bitmap(loader.getResult("P0win"));
     }
     if (PlayerinTurn == 1) {
-        var wintext = new createjs.Text("P1 WINS", "70px Copperplate", "#FFFFFF");
+        var wintext = new createjs.Bitmap(loader.getResult("P1win"));
     }
     if (PlayerinTurn == 2) {
-        var wintext = new createjs.Text("P2 WINS", "70px Copperplate", "#FFFFFF");
+        var wintext = new createjs.Bitmap(loader.getResult("P2win"));
     }
     if (PlayerinTurn == 3) {
-        var wintext = new createjs.Text("P3 WINS", "70px Copperplate", "#FFFFFF");
+        var wintext = new createjs.Bitmap(loader.getResult("P3win"));
     }
-    wintext.x = 570;
-    wintext.y = 300;
+    wintext.x = 0;
+    wintext.y = 0;
     wintext.textBaseline = "alphabetic";
     WinnerScreenContainer.addChild(wintext);
 }
@@ -151,30 +193,22 @@ function RemoveWinnerScreen() {
 
 //2. Define Container to hold each player's hand information
 P0container = new createjs.Container();
-stage.addChild(P0container);
 P1container = new createjs.Container();
-stage.addChild(P1container);
 P2container = new createjs.Container();
-stage.addChild(P2container);
 P3container = new createjs.Container();
-stage.addChild(P3container);
 P0CardsonTablecontainer = new createjs.Container();   
-stage.addChild(P0CardsonTablecontainer);
 P1CardsonTablecontainer = new createjs.Container();  
-stage.addChild(P1CardsonTablecontainer);
 P2CardsonTablecontainer = new createjs.Container(); 
-stage.addChild(P2CardsonTablecontainer);
 P3CardsonTablecontainer = new createjs.Container(); 
-stage.addChild(P3CardsonTablecontainer);
 P0NameContainer = new createjs.Container();
-stage.addChild(P0NameContainer);
 P1NameContainer = new createjs.Container();
-stage.addChild(P1NameContainer);
 P2NameContainer = new createjs.Container();
-stage.addChild(P2NameContainer);
 P3NameContainer = new createjs.Container();
-stage.addChild(P3NameContainer);
 
+stage.addChildAt(P0container,P1container,P2container,P3container,
+    P0CardsonTablecontainer,P1CardsonTablecontainer,P2CardsonTablecontainer,
+    P3CardsonTablecontainer, P0NameContainer, P1NameContainer, P2NameContainer,
+    P3NameContainer, 1); 
 
 //Define functions to display each player's cards
 
@@ -318,8 +352,52 @@ function DisplayHandCount(HandCount1, HandCount2, HandCount3) {
     createP3CardBack(HandCount3);
 }
 
+function DealCardAnimate(){
+    var CardsonTableArray = 
+    [P0container, P1container, P2container, P3container];
+
+    for (let i = 0; i <= CardsonTableArray.length - 1; i++){
+        var cardsdestination = [];
+        
+        //Push each card's coordinate into cardsdestination
+        for (let j = 0; j <= CardsonTableArray[i].children.length - 1; j++){
+            cardsdestination.push([
+                CardsonTableArray[i].children[j].x,
+                CardsonTableArray[i].children[j].y
+            ]);
+        }
+
+        //Move each card's coordinate to the first card
+        for (let j = 0; j <= CardsonTableArray[i].children.length - 1; j++){
+
+            CardsonTableArray[i].children[j].x =
+            CardsonTableArray[i].children[0].x;
+
+            CardsonTableArray[i].children[j].y = 
+            CardsonTableArray[i].children[0].y
+        }
+
+        var delay = 0;
+
+        //Finally move the cards to final destination
+        for (let j = 0; j <= CardsonTableArray[i].children.length - 1; j++){
+
+            delay += 50;
+
+            createjs.Tween.get(CardsonTableArray[i].children[j])
+            .to({
+                x: cardsdestination[j][0], 
+                y: cardsdestination[j][1]
+            }, 500 + delay, createjs.Ease.getPowInOut(2));
+        }
+    }
+}
+
 //Define the Cards on Table Areas
 function P0CardsonTable(CardsonTable) {
+
+    //Disable card visibility for animation purpose
+    P0CardsonTablecontainer.alpha = 0;
 
     var cardface = new createjs.Bitmap(loader.getResult("2♠"));
     var cardfacewidth = cardface.getBounds().width;
@@ -337,9 +415,18 @@ function P0CardsonTable(CardsonTable) {
         P0hits[i].y = bgheight * 4/9;
         P0CardsonTablecontainer.addChild(P0hits[i]);
     }
+    P0PlayCardAnimation();
+}
+
+function P0PlayCardAnimation(){
+    createjs.Tween.get(P0CardsonTablecontainer)
+    .to({alpha: 0.5, y: bgheight / 10})
+    .to({alpha: 1, x: 0, y: 0}, 400, createjs.Ease.getPowInOut(3));
 }
 
 function P1CardsonTable(CardsonTable) {
+
+    P1CardsonTablecontainer.alpha = 0;
 
     var cardface = new createjs.Bitmap(loader.getResult("2♠"));
     var cardfacewidth = cardface.getBounds().width;
@@ -359,9 +446,18 @@ function P1CardsonTable(CardsonTable) {
         P1CardsonTablecontainer.addChild(P1hits[i]);
 
     }
+    P1PlayCardAnimation();
+}
+
+function P1PlayCardAnimation(){
+    createjs.Tween.get(P1CardsonTablecontainer)
+    .to({alpha: 0.5, x: bgheight / 24})
+    .to({alpha: 1, x: 0, y: 0}, 400, createjs.Ease.getPowInOut(3));
 }
 
 function P2CardsonTable(CardsonTable) {
+
+    P2CardsonTablecontainer.alpha = 0;
 
     var cardface = new createjs.Bitmap(loader.getResult("2♠"));
     var cardfacewidth = cardface.getBounds().width;
@@ -379,9 +475,18 @@ function P2CardsonTable(CardsonTable) {
         P2CardsonTablecontainer.addChild(P2hits[i]);
 
     }
+    P2PlayCardAnimation();
+}
+
+function P2PlayCardAnimation(){
+    createjs.Tween.get(P2CardsonTablecontainer)
+    .to({alpha: 0.5, y: bgheight / 24 * -1})
+    .to({alpha: 1, x: 0, y: 0}, 400, createjs.Ease.getPowInOut(3));
 }
 
 function P3CardsonTable(CardsonTable) {
+
+    P3CardsonTablecontainer.alpha = 0;
 
     var cardface = new createjs.Bitmap(loader.getResult("2♠"));
     var cardfacewidth = cardface.getBounds().width;
@@ -400,53 +505,61 @@ function P3CardsonTable(CardsonTable) {
         P3hits[i].y = align + count;
         P3hits[i].rotation = 90;
         P3CardsonTablecontainer.addChild(P3hits[i]);
-
     }
+    P3PlayCardAnimation();
+}
 
+function P3PlayCardAnimation(){
+    createjs.Tween.get(P3CardsonTablecontainer)
+    .to({alpha: 0.5, x: bgheight / 24 * -1})
+    .to({alpha: 1, x: 0, y: 0}, 400, createjs.Ease.getPowInOut(3));
 }
 
 function TextPass(PlayerinTurn) {
-    var textpass = new createjs.Text("PASS", "50px Copperplate", "#FFFFFF");
+    //var passtext = new createjs.Text("PASS", "50px Copperplate", "#FFFFFF");
+    var passtext = new createjs.Bitmap(loader.getResult("passtext"));
 
     if (PlayerinTurn == 0) {
         P0CardsonTablecontainer.removeAllChildren();
+        P0CardsonTablecontainer.alpha = 0;
     
-        textpass.x = (bgwidth - textpass.getBounds().width) / 2;;
-        textpass.y = bgheight * 0.625;
-        textpass.textBaseline = "alphabetic";
-        P0CardsonTablecontainer.addChild(textpass);
+        passtext.x = (bgwidth - passtext.getBounds().width) / 2;;
+        passtext.y = bgheight * 0.56;
+        P0CardsonTablecontainer.addChild(passtext);
+        P0PlayCardAnimation();
+
     }
 
     if (PlayerinTurn == 1) {
         P1CardsonTablecontainer.removeAllChildren();
+        P1CardsonTablecontainer.alpha = 0;
 
-        textpass.x = bgwidth * 5 / 6;
-        textpass.y = (bgheight + textpass.getBounds().width) / 2.25;
-        textpass.rotation = 270;
-        textpass.textBaseline = "alphabetic";
-        P1CardsonTablecontainer.addChild(textpass);
-
+        passtext.x = bgwidth * 840 / 1080;
+        passtext.y = (bgheight + passtext.getBounds().width) / 2.25;
+        passtext.rotation = 270;
+        P1CardsonTablecontainer.addChild(passtext);
+        P1PlayCardAnimation();
     }
 
     if (PlayerinTurn == 2) {
         P2CardsonTablecontainer.removeAllChildren();
+        P2CardsonTablecontainer.alpha = 0;
 
-        textpass.x = (bgwidth - textpass.getBounds().width) / 2;;
-        textpass.y = bgheight * 215 / 720;
-        textpass.textBaseline = "alphabetic";
-        P2CardsonTablecontainer.addChild(textpass);
-
+        passtext.x = (bgwidth - passtext.getBounds().width) / 2;;
+        passtext.y = bgheight * 160 / 720;
+        P2CardsonTablecontainer.addChild(passtext);
+        P2PlayCardAnimation();
     }
 
     if (PlayerinTurn == 3) {
         P3CardsonTablecontainer.removeAllChildren();
+        P3CardsonTablecontainer.alpha = 0;
 
-        textpass.x = bgwidth * 180 / 1080;
-        textpass.y = bgheight / 3 ;
-        textpass.rotation = 90;
-        textpass.textBaseline = "alphabetic";
-        P3CardsonTablecontainer.addChild(textpass);
-
+        passtext.x = bgwidth * 240 / 1080;
+        passtext.y = bgheight / 3 ;
+        passtext.rotation = 90;
+        P3CardsonTablecontainer.addChild(passtext);
+        P3PlayCardAnimation();
     }
 }
 
@@ -465,39 +578,49 @@ function ClearCardsonTable(){
     }
 }
 
+
 //Display Player Name
+function CreateP0Name(){
+    var P0name = new createjs.Bitmap(loader.getResult("P0name"));
+    P0name.x = bgwidth *  96 / 1080;
+    P0name.y = bgheight * 608 / 720;
+    P0name.scale = 0.80;
+    P0name.name = "P0name";
+    P0NameContainer.addChild(P0name);
+}
+
+function CreateP1Name(){
+    var P1name = new createjs.Bitmap(loader.getResult("P1name"));
+    P1name.x = bgwidth * 900 / 1080;
+    P1name.y = bgheight * 30 / 720;
+    P1name.scale = 0.80;
+    P1name.name = "P1name";
+    P1NameContainer.addChild(P1name);
+}
+
+function CreateP2Name(){
+    var P2name = new createjs.Bitmap(loader.getResult("P2name"));
+    P2name.x = bgwidth * 220 / 1080;
+    P2name.y = bgheight * 54 / 720;
+    P2name.scale = 0.80;
+    P2name.name = "P2name";
+    P2NameContainer.addChild(P2name);
+}
+
+function CreateP3Name(){
+    var P3name = new createjs.Bitmap(loader.getResult("P3name"));
+    P3name.x = bgwidth * 10 / 1080;
+    P3name.y = bgheight * 520 / 720;
+    P3name.scale = 0.80;
+    P3name.name = "P3name";
+    P3NameContainer.addChild(P3name);
+}
+
 function CreatePlayerName(){
-var P0name = new createjs.Text("YOU", "45px Copperplate", "#FFFFFF");
-P0name.shadow = new createjs.Shadow("#424949", 3, 3, 10);
-P0name.x = bgwidth *  120 / 1080;
-P0name.y = bgheight * 670 / 720;
-P0name.name = "P0name";
-P0name.textBaseline = "alphabetic";
-P0NameContainer.addChild(P0name);
-
-var P1name = new createjs.Text("P1", "35px Copperplate", "#FFFFFF");
-P1name.shadow = new createjs.Shadow("#424949", 3, 3, 10);
-P1name.x = bgwidth * 925 / 1080;
-P1name.y = bgheight * 100 / 720;
-P1name.name = "P1name";
-P1name.textBaseline = "alphabetic";
-P1NameContainer.addChild(P1name);
-
-var P2name = new createjs.Text("P2", "35px Copperplate", "#FFFFFF");
-P2name.shadow = new createjs.Shadow("#424949", 3, 3, 10);
-P2name.x = bgwidth * 270 / 1080;
-P2name.y = bgheight * 55 / 720;
-P2name.name = "P2name";
-P2name.textBaseline = "alphabetic";
-P2NameContainer.addChild(P2name);
-
-var P3name = new createjs.Text("P3", "35px Copperplate", "#FFFFFF");
-P3name.shadow = new createjs.Shadow("#424949", 3, 3, 10);
-P3name.x = bgwidth * 25 / 1080;
-P3name.y = bgheight * 560 / 720;
-P3name.name = "P3name";
-P3name.textBaseline = "alphabetic";
-P3NameContainer.addChild(P3name);
+CreateP0Name();
+CreateP1Name();
+CreateP2Name();
+CreateP3Name();
 }
 
 function ClearPlayerName() {
@@ -505,98 +628,93 @@ function ClearPlayerName() {
     P1NameContainer.removeAllChildren();
     P2NameContainer.removeAllChildren();
     P3NameContainer.removeAllChildren();
-};
+}
 
 function HighlightPlayerName(PlayerinTurn) {
     
     if (PlayerinTurn == 0) {
-        var playertext = P0NameContainer.getChildByName("P0name");
-        playertext.scale = 1.2;
-        playertext.color = "#F7DC6F";
+        P0NameContainer.removeChild(P0NameContainer.getChildByName("P0name"));
+        var P0name = new createjs.Bitmap(loader.getResult("P0namehighlighted"));
+        P0name.x = bgwidth *  96 / 1080;
+        P0name.y = bgheight * 608 / 720;
+        P0name.name = "P0namehighlighted";
+        P0NameContainer.addChild(P0name);
     }
 
     if (PlayerinTurn == 1) {
-        var playertext = P1NameContainer.getChildByName("P1name");
-        playertext.scale = 1.4;
-        playertext.color = "#F7DC6F";
+        P1NameContainer.removeChild(P1NameContainer.getChildByName("P1name"));
+        var P1name = new createjs.Bitmap(loader.getResult("P1namehighlighted"));
+        P1name.x = bgwidth * 890 / 1080;
+        P1name.y = bgheight * 30 / 720;
+        P1name.name = "P1namehighlighted";
+        P1NameContainer.addChild(P1name);
     }
 
     if (PlayerinTurn == 2) {
-        var playertext = P2NameContainer.getChildByName("P2name");
-        playertext.scale = 1.4;
-        playertext.color = "#F7DC6F";
+        P2NameContainer.removeChild(P2NameContainer.getChildByName("P2name"));
+        var P2name = new createjs.Bitmap(loader.getResult("P2namehighlighted"));
+        P2name.x = bgwidth * 220 / 1080;
+        P2name.y = bgheight * 54 / 720;
+        P2name.name = "P2namehighlighted";
+        P2NameContainer.addChild(P2name);
     }
     
     if (PlayerinTurn == 3) {
-        var playertext = P3NameContainer.getChildByName("P3name");
-        playertext.scale = 1.4;
-        playertext.color = "#F7DC6F";
+        P3NameContainer.removeChild(P3NameContainer.getChildByName("P3name"));
+        var P3name = new createjs.Bitmap(loader.getResult("P3namehighlighted"));
+        P3name.x = bgwidth * 10 / 1080;
+        P3name.y = bgheight * 520 / 720;
+        P3name.name = "P3namehighlighted";
+        P3NameContainer.addChild(P3name);
     }  
 };
 
 function ClearHighlight(PlayerinTurn) {
     if (PlayerinTurn == 0) {
-        var playertext = P0NameContainer.getChildByName("P0name");
-        playertext.scale = 1;
-        playertext.color = "#FFFFFF";
+        P0NameContainer.removeChild(P0NameContainer.getChildByName("P0namehighlighted"));
+        CreateP0Name();
     }
 
     if (PlayerinTurn == 1) {
-        var playertext = P1NameContainer.getChildByName("P1name");
-        playertext.scale = 1;
-        playertext.color = "#FFFFFF";
+        P1NameContainer.removeChild(P1NameContainer.getChildByName("P1namehighlighted"));
+        CreateP1Name();
     }
 
     if (PlayerinTurn == 2) {
-        var playertext = P2NameContainer.getChildByName("P2name");
-        playertext.scale = 1;
-        playertext.color = "#FFFFFF";
+        P2NameContainer.removeChild(P2NameContainer.getChildByName("P2namehighlighted"));
+        CreateP2Name();
     }
     
     if (PlayerinTurn == 3) {
-        var playertext = P3NameContainer.getChildByName("P3name");
-        playertext.scale = 1;
-        playertext.color = "#FFFFFF";
+        P3NameContainer.removeChild(P3NameContainer.getChildByName("P3namehighlighted"));
+        CreateP3Name();
     } 
 }
 
 //3. Create The Hit Button
 var ButtonHit = new createjs.Container();
 function CreateHitButton(){
-    var hitbox = new createjs.Shape();
-    hitbox.graphics.beginFill("#85929E").drawRoundRectComplex(
-        0, 0, 170, 75, 10, 10, 10, 10);
-    hitbox.shadow = new createjs.Shadow("#424949", 3, 3, 5);
-    hitbox.x = 880;
-    hitbox.y = 525;
-    hitbox.name = "hitbox";
+
+    var hitbox = new createjs.Bitmap(loader.getResult("hitbuttondeactivated"));
+    hitbox.x = bgwidth * 880 / 1080;
+    hitbox.y = bgheight * 525 / 720;
+    hitbox.name = "hitbuttondeactivated";
     ButtonHit.addChild(hitbox);
-    var hittext = new createjs.Text("Hit", "30px Copperplate", "#FFFFFF");
-    hittext.x = 940;
-    hittext.y = 570;
-    hittext.textBaseline = "alphabetic";
-    ButtonHit.addChild(hittext);
-    stage.addChild(ButtonHit);
-    }
+    stage.addChildAt(ButtonHit, 1); 
+}
 
 
 //4. Create The Pass Button
 var ButtonPass = new createjs.Container();
 function CreatePassButton() {
-    var passbox = new createjs.Shape();
-    passbox.graphics.beginFill("#85929E").drawRoundRectComplex(
-        0, 0, 170, 75, 10, 10, 10, 10)
-    passbox.shadow = new createjs.Shadow("#424949", 3, 3, 5);
-    passbox.x = 880;
-    passbox.y = 615;
-    passbox.name = "passbox";
+
+    var passbox = new createjs.Bitmap(loader.getResult("passbuttondeactivated"));
+    passbox.x = bgwidth * 880 / 1080;
+    passbox.y = bgheight * 615 / 720;
+    passbox.name = "passbuttondeactivated";
     ButtonPass.addChild(passbox);
-    var passtext = new createjs.Text("Pass", "30px Copperplate", "#FFFFFF");
-    passtext.x = 930;
-    passtext.y = 660;
-    passtext.textBaseline = "alphabetic";
-    ButtonPass.addChild(passtext);
-    stage.addChild(ButtonPass);
+    stage.addChildAt(ButtonPass, 1); 
+
 }
 
 //Button Activations
@@ -604,157 +722,217 @@ HitButtonActivated = false;
 PassButtonActivated = false;
 
 function ActivateHitButton() {
-    var hitbox = ButtonHit.getChildByName("hitbox");
-    hitbox.graphics.clear().beginLinearGradientFill(["#F1C40F", "#B7950B"], [0.05, 1],
-    0, 0, 0, 120).drawRoundRectComplex(0, 0, 170, 75, 10, 10, 10, 10);
-    hitbox.shadow = new createjs.Shadow("#424949", 3, 3, 5);
-    hitbox.x = 880;
-    hitbox.y = 525;
+
+    var hitbox = new createjs.Bitmap(loader.getResult("hitbutton"));
+    hitbox.x = bgwidth * 880 / 1080;
+    hitbox.y = bgheight * 525 / 720;
+    hitbox.name = "hitbutton";
+    ButtonHit.removeChild(ButtonHit.getChildByName("hitbuttondeactivated"));
+    ButtonHit.addChild(hitbox);
+    stage.addChildAt(ButtonHit, 1);
 
     HitButtonActivated = true;
-
-    ButtonHit.addEventListener("click", function(event) {
-        if (PlayerinTurn == 0) {
-            PlayCard(PlayerinTurn);
-        }
-    });
-
+    //console.log("Hit Button: Activated");
 }
 
-function ActivatePassButton(PlayerinTurn) {
+function ActivatePassButton() {
     //Can only Pass when not in command
-    if (Players[PlayerinTurn].command == false) {
+    if (Players[0].command == false) {
 
-        var passbox = ButtonPass.getChildByName("passbox");
-        passbox.graphics.clear().beginLinearGradientFill(["#2980B9", "#1F618D"], [0.05, 1],
-        0, 0, 0, 120).drawRoundRectComplex(0, 0, 170, 75, 10, 10, 10, 10);
-        passbox.shadow = new createjs.Shadow("#424949", 3, 3, 5);
-        passbox.x = 880;
-        passbox.y = 615;  
+        var passbox = new createjs.Bitmap(loader.getResult("passbutton"));
+        passbox.x = bgwidth * 880 / 1080;
+        passbox.y = bgheight * 615 / 720;
+        passbox.name = "passbutton";
+        ButtonPass.removeChild(ButtonHit.getChildByName("passbuttondeactivated"));
+        ButtonPass.addChild(passbox);
+        stage.addChildAt(ButtonPass, 1); 
     
         PassButtonActivated = true;
-        
-        ButtonPass.addEventListener("click", function(event) {
-            if (PlayerinTurn == 0) {
-                Pass(PlayerinTurn);
-            }
-        });
+        //console.log("Pass Button: Activated");
+
     }
 }
 
 function DeactivateHitButton() {
 
-    if (HitButtonActivated == true) {
-        var hitbox = ButtonHit.getChildByName("hitbox");
-        hitbox.graphics.clear().beginFill("#85929E").drawRoundRectComplex(0, 0, 170, 75, 10, 10, 10, 10);
-        hitbox.shadow = new createjs.Shadow("#424949", 3, 3, 5);
-        hitbox.x = 880;
-        hitbox.y = 525;
-        ButtonHit.removeAllEventListeners(); 
-        
-        HitButtonActivated = false;
-    }
+    ButtonHit.removeAllEventListeners();
+    HitButtonActivated = false;
+    //console.log("Hit Button: Deactivated");
+
+    //Delay a little bit for animation
+    setTimeout(() => {
+        ButtonHit.removeChild(ButtonHit.getChildByName("hitbutton"));
+        CreateHitButton()}, 250);
 }
 
 function DeactivatePassButton() {
 
-    if (PassButtonActivated == true) {
-        var passbox = ButtonPass.getChildByName("passbox");
-        passbox.graphics.clear().beginFill("#85929E").drawRoundRectComplex(0, 0, 170, 75, 10, 10, 10, 10);
-        passbox.shadow = new createjs.Shadow("#424949", 3, 3, 5);
-        passbox.x = 880;
-        passbox.y = 615;  
-        ButtonPass.removeAllEventListeners();
+    ButtonPass.removeAllEventListeners(); 
+    PassButtonActivated = false;
+    //console.log("Pass Button: Deactivated");
 
+    setTimeout(() => {
+        ButtonPass.removeChild(ButtonPass.getChildByName("passbutton"));
+        CreatePassButton()}, 250);
+}
+
+function ClickHitAnimate() {
+
+    ButtonHit.removeChild(ButtonHit.getChildByName("hitbutton"));
+
+    var hitbox = new createjs.Bitmap(loader.getResult("hitbuttonclicked"));
+    hitbox.x = bgwidth * 880 / 1080;
+    hitbox.y = bgheight * 525 / 720;
+    hitbox.name = "hitbuttonclicked";
+    ButtonHit.addChild(hitbox);
+
+    setTimeout(() => {
+        ButtonHit.removeChild(ButtonHit.getChildByName("hitbuttonclicked"));
+        //Reuse ActivateHitButton, but set HitButtonActivated to false
+        ActivateHitButton();
+        HitButtonActivated = false;
+        //console.log("Hit Button: Deactivated");
+        }, 50);
+}
+
+function ClickPassAnimate() {
+
+    ButtonPass.removeChild(ButtonPass.getChildByName("passbutton"));
+
+    var passbox = new createjs.Bitmap(loader.getResult("passbuttonclicked"));
+    passbox.x = bgwidth * 880 / 1080;
+    passbox.y = bgheight * 615 / 720;
+    passbox.name = "passbuttonclicked";
+    ButtonPass.addChild(passbox);
+
+    setTimeout(() => {
+        ButtonPass.removeChild(ButtonPass.getChildByName("passbuttonclicked"));
+        ActivatePassButton();
         PassButtonActivated = false;
-    }
+        //console.log("Pass Button: Deactivated");
+        }, 50);
 }
 
 //5. Create the Start Button
 var ButtonStart = new createjs.Container();
 
-function CreatStartButton(){
-    var startbox = new createjs.Shape();
-    startbox.graphics.beginLinearGradientFill(["#CB4335", "#B03A2E"], [0.05, 1],
-    0, 0, 0, 120).drawRoundRectComplex(0, 0, bgwidth / 6, bgheight / 6, 10, 10, 10, 10);
-    startbox.shadow = new createjs.Shadow("#424949", 3, 3, 5);
-    var startboxwidth = startbox.graphics.command.w;
-    var startboxheight = startbox.graphics.command.h;
-    startbox.x = (bgwidth - startboxwidth) / 1.4;
-    startbox.y = (bgheight - startboxheight) / 1.4;
-    startbox.name = "startbox";
+function CreatStartButton(ScreenContainer){
+    var startbox = new createjs.Bitmap(loader.getResult("startbutton"));
+    startbox.x = 
+    (ScreenContainer.getBounds().width - startbox.getBounds().width) / 1.25;
+    startbox.y = 
+    (ScreenContainer.getBounds().height - startbox.getBounds().height) / 1.4;
+    startbox.name = "startbutton";
     ButtonStart.addChild(startbox);
-    var starttext = new createjs.Text("Start", "40px Copperplate", "#FFFFFF");
-    starttext.x = 
-    startbox.x + (startboxwidth - starttext.getBounds().width) / 2;
-    starttext.y = 
-    startbox.y + (startboxheight - starttext.getBounds().height)/1.15;
-    starttext.textBaseline = "alphabetic";
-    ButtonStart.addChild(starttext);
-    stage.addChild(ButtonStart);
 }
 
+function ClickStartAnimate(ScreenContainer) {
+
+    ButtonStart.removeChild(ButtonStart.getChildByName("startbutton")) 
+
+    var startbox = new createjs.Bitmap(loader.getResult("startbuttonclicked"));
+    startbox.x = 
+    (ScreenContainer.getBounds().width - startbox.getBounds().width) / 1.25;
+    startbox.y = 
+    (ScreenContainer.getBounds().height - startbox.getBounds().height) / 1.4;
+    startbox.name = "startbuttonclicked";
+    ButtonStart.addChild(startbox);
+
+    setTimeout(() => {
+        ButtonStart.removeChild(ButtonStart.getChildByName("startbuttonclicked"));
+        CreatStartButton(ScreenContainer)}, 100);
+}
 
 //6. Game Flow: Start Game
-ButtonStart.addEventListener("click", function() { 
+function ClickStart(ScreenContainer) {
+    ButtonStart.addEventListener("click", function() { 
 
-    //Graphics
-    //Deactiviate Start Button untill end game
-    RemoveWinnerScreen();
-    RemoveStartScreen();
-    ButtonStart.removeAllChildren();
+        //Graphics
+        //Deactiviate Start Button untill end game 
+        ButtonStart.removeAllEventListeners();
+        ClickStartAnimate(ScreenContainer);
 
-    CreateHitButton();
-    CreatePassButton();
-    CreatePlayerName();
-    //
-
-    StartGame();
+        if (WinnerScreenContainer.children.length !== 0) {
+            InitTableDisplay();
+            QuitScreenAnimate(WinnerScreenContainer);
+            setTimeout(() => {
+                ButtonStart.removeAllChildren();
+                RemoveWinnerScreen()}, 1000);
+        } 
     
-    AddPlayer();
-
-    DealCard();
-
-    PositionArray = [Players[0], Players[1], Players[2], Players[3]];
-
-    FindDiamond3();
-
-    console.log("Position Array: ", PositionArray)
-
-    PlayerinTurn = PositionArray[0].id;
-    PositionArray[0].turn = true;
-    Round = 0;
     
-    //Graphics: Display Cards and Acitvate Button
-    HighlightPlayerName(PlayerinTurn);
-    DisplayHandCount(
-        Players[1].hand.length,
-        Players[2].hand.length,
-        Players[3].hand.length);
-    DisplayP0Hand(Players[0].hand);
-    P0SelectedCards();
-
-    if (Players[PlayerinTurn].id == 0) {
-        HitActivateListener ();
-        ActivatePassButton(PlayerinTurn);
-    }
-    //
-
-    Players.forEach(element => {console.log(element);});
-
-    //AI Update Analysis
-    Players[PlayerinTurn].ai.UpdateCardsonTable(
-        Round, Players[PlayerinTurn].command, CardsonTable, CardsonTableRanking);
+        if (StartScreenContainer.children.length !== 0) {
+            QuitScreenAnimate(StartScreenContainer);
     
-    //AI Start running if not Player 0
-    if (Players[PlayerinTurn].id !== 0) {
-        setTimeout(() => { AIPlay(PlayerinTurn, Analyze(PlayerinTurn))}, 1000);
-    } else {
-    //Analyze for Player 0 if not AI turn
-    Analyze(PlayerinTurn);
-    }
+            setTimeout(() => {
+                ButtonStart.removeAllChildren();
+                RemoveStartScreen()}, 1000);
+        }
+    
+        CreateHitButton();
+        CreatePassButton();
+        CreatePlayerName();
+        //
+    
+        StartGame();
+        
+        AddPlayer();
+    
+        DealCard();
+    
+        PositionArray = [Players[0], Players[1], Players[2], Players[3]];
+    
+        FindDiamond3();
+    
+        console.log("Position Array: ", PositionArray)
+    
+        PlayerinTurn = PositionArray[0].id;
+        PositionArray[0].turn = true;
+        Round = 0;
+        
+        //Graphics: Display Cards and Acitvate Button
+        
+        //May have to set alpha of Player Containers to zero for animation
+        DisplayHandCount(
+            Players[1].hand.length,
+            Players[2].hand.length,
+            Players[3].hand.length);
+        DisplayP0Hand(Players[0].hand);
+        DealCardAnimate();
+    
+        HighlightPlayerName(PlayerinTurn);
+        P0SelectedCards();
+    
+        if (Players[PlayerinTurn].id == 0) {
+            HitActivateListener ();
+            ActivatePassButton();
+            ButtonPass.addEventListener("click", function(event) {
+                if (PlayerinTurn == 0) {
+                    ClickPassAnimate();
+                    Pass(PlayerinTurn);
+                }
+            });
+        }
+        //
+    
+        Players.forEach(element => {console.log(element);});
+    
+        //AI Update Analysis
+        Players[PlayerinTurn].ai.UpdateCardsonTable(
+            Round, Players[PlayerinTurn].command, CardsonTable, CardsonTableRanking);
+        
+        //AI Start running if not Player 0
+        if (Players[PlayerinTurn].id !== 0) {
+            setTimeout(() => { AIPlay(PlayerinTurn, Analyze(PlayerinTurn))}, 2000);
+        } else {
+        //Analyze for Player 0 if not AI turn
+        Analyze(PlayerinTurn);
+        }
+    
+    })
+}
 
-})
+ClickStart(StartScreenContainer);
 
 //Functions for Start Game
 function StartGame() {
@@ -1087,7 +1265,6 @@ function ActivateHitConditions(P0selectedcards, CardsonTable) {
     //Deactivate Hit if no card picked
     if ((pickcardcheck.length == 0) && (HitButtonActivated == true)) {
         DeactivateHitButton();
-        console.log("Hit Button: Deactivated");
         return;  
     }
 
@@ -1096,14 +1273,18 @@ function ActivateHitConditions(P0selectedcards, CardsonTable) {
 
         if ((rule.ValidFirstCommand(pickcardcheck) == true) &&
         ((HitButtonActivated == false))) {
-                console.log("Hit Button: Activated");
                 ActivateHitButton();
+                ButtonHit.addEventListener("click", function(event) {
+                    if (PlayerinTurn == 0) {
+                        ClickHitAnimate();
+                        PlayCard(PlayerinTurn);
+                    }
+                });
                 return;  
         }
 
         if ((rule.ValidFirstCommand(pickcardcheck) == false) &&
         ((HitButtonActivated == true))) {
-                console.log("Hit Button: Deactivated");
                 DeactivateHitButton();
                 return;  
         }
@@ -1119,8 +1300,13 @@ function ActivateHitConditions(P0selectedcards, CardsonTable) {
         (rule.ValidHit(pickcardcheck, CardsonTable) == true))) {
                 
             if(HitButtonActivated == false) {
-                console.log("Hit Button: Activated");
                 ActivateHitButton();
+                ButtonHit.addEventListener("click", function(event) {
+                    if (PlayerinTurn == 0) {
+                        ClickHitAnimate();
+                        PlayCard(PlayerinTurn);
+                    }
+                });
                 return;
             }
         }
@@ -1132,7 +1318,6 @@ function ActivateHitConditions(P0selectedcards, CardsonTable) {
         (rule.ValidHit(pickcardcheck, CardsonTable) == false))) {
             
             if(HitButtonActivated == true) {
-                console.log("Hit Button: Deactivated");
                 DeactivateHitButton();
                 return;
             }
@@ -1150,19 +1335,52 @@ function CheckWinner(PlayerinTurn) {
         }
 
         setTimeout(() => {
+            ClearTableDisplay();
             AddWinnerScreen();
             WinnerText(PlayerinTurn);
-            ClearPlayerName()
-            ClearCardsonTable();
+            CreatStartButton(WinnerScreenContainer);
+            WinnerScreenContainer.addChild(ButtonStart);
+            ShowScreenAnimate(WinnerScreenContainer); 
+        }, 1250)
+
+        setTimeout(() => {
             P0container.removeAllChildren();
             P1container.removeAllChildren();
             P2container.removeAllChildren();
             P3container.removeAllChildren();
             ButtonHit.removeAllChildren();
             ButtonPass.removeAllChildren(); 
-            CreatStartButton();   
-            
-        }, 1500);
+            ClearPlayerName();
+            ClearCardsonTable(); 
+            ClickStart(WinnerScreenContainer);
+        }, 2500);
+    }
+}
+
+function ClearTableDisplay(){
+    var cleararray = [P0container, P1container, P2container, P3container,
+        ButtonHit, ButtonPass, P0NameContainer, P1NameContainer,
+        P2NameContainer, P3NameContainer, P0CardsonTablecontainer,
+        P1CardsonTablecontainer,P2CardsonTablecontainer, P3CardsonTablecontainer];
+
+    for (let i = 0; i <= cleararray.length - 1; i++) {
+        if (cleararray[i].children.length !== 0){
+            createjs.Tween.get(cleararray[i])
+            .to({alpha: 0}, 1000, createjs.Ease.getPowInOut(3));
+        }
+    }
+}
+
+function InitTableDisplay(){
+    var displayarray = [P0container, P1container, P2container, P3container,
+        ButtonHit, ButtonPass, P0NameContainer, P1NameContainer,
+        P2NameContainer, P3NameContainer, P0CardsonTablecontainer,
+        P1CardsonTablecontainer,P2CardsonTablecontainer, P3CardsonTablecontainer];
+
+    for (let i = 0; i <= displayarray.length - 1; i++) {
+        if (displayarray[i].alpha == 0){
+                displayarray[i].alpha = 1;
+        }
     }
 }
 
@@ -1197,8 +1415,14 @@ function EndTurn(i) {
         //Run Hit Activation test once just in case cards selected prior to P0's turn
         ActivateHitConditions(P0selectedcards, CardsonTable);
 
-        HitActivateListener ();
-        ActivatePassButton(PlayerinTurn);
+        HitActivateListener();
+        ActivatePassButton();
+        ButtonPass.addEventListener("click", function(event) {
+            if (PlayerinTurn == 0) {
+                ClickPassAnimate();
+                Pass(PlayerinTurn);
+            }
+        });
     }
     
     //Next Player Starts to Analyze
