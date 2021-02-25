@@ -257,7 +257,7 @@ function P0SelectedCards () {
 
                 P0selectedcards.push(P0container.children.indexOf(card));
                 card.y = bgheight * 12/18;
-                console.log("P0selectedcards: ", P0selectedcards);
+                //console.log("P0selectedcards: ", P0selectedcards);
                 return;
             }
 
@@ -269,7 +269,7 @@ function P0SelectedCards () {
                     }
                 }
                 card.y = bgheight * 13/18;
-                console.log("P0selectedcards: ", P0selectedcards)
+                //console.log("P0selectedcards: ", P0selectedcards)
                 return;
             }
         });
@@ -945,7 +945,7 @@ function ClickStart(ScreenContainer) {
     
         FindDiamond3();
     
-        console.log("Position Array: ", PositionArray)
+        //console.log("Position Array: ", PositionArray)
     
         PlayerinTurn = PositionArray[0].id;
         PositionArray[0].turn = true;
@@ -976,7 +976,7 @@ function ClickStart(ScreenContainer) {
         }
         //
     
-        Players.forEach(element => {console.log(element);});
+        //Players.forEach(element => {console.log(element);});
     
         //AI Update Analysis
         Players[PlayerinTurn].ai.UpdateCardsonTable(
@@ -1071,7 +1071,7 @@ function Analyze(PlayerinTurn) {
             handcounts.push(Players[p].hand.length);
         }
     }
-    console.log("Hand Counts:", handcounts);
+    //console.log("Hand Counts:", handcounts);
 
     Players[PlayerinTurn].analytics.AnalyzeHand(
         Players[PlayerinTurn].hand, 
@@ -1080,8 +1080,8 @@ function Analyze(PlayerinTurn) {
     var cardsselected = Players[PlayerinTurn].ai.PickCards(
         handcounts[0], handcounts[1], handcounts[2]);
 
-    console.log("Player in Turn: ", Players[PlayerinTurn].ai);
-    console.log("AI Pick: ", cardsselected);
+    //console.log("Player in Turn: ", Players[PlayerinTurn].ai);
+    //console.log("AI Pick: ", cardsselected);
 
     return cardsselected;
 
@@ -1129,7 +1129,7 @@ function PlayCard(i) {
             //If Selected Card matches the rules
             CardsonTable = CardsonTable.concat(CardsSelected);
             CardsonTableRanking = rule.CardsontheTableRanking(CardsSelected);
-            console.log("CardsonTableRanking: ", CardsonTableRanking);
+            //console.log("CardsonTableRanking: ", CardsonTableRanking);
 
             //Update Analytics
             for (let k = 0; k <= 3; k++){
@@ -1153,7 +1153,7 @@ function PlayCard(i) {
             }
             //
 
-            console.log("Cards on Table: ", CardsonTable)
+            //console.log("Cards on Table: ", CardsonTable)
             return EndTurn(PlayerinTurn)
 
         }
@@ -1186,7 +1186,7 @@ function PlayCard(i) {
                 //If Selected Card matches the rules
                 CardsonTable = CardsonTable.concat(CardsSelected);
                 CardsonTableRanking = rule.CardsontheTableRanking(CardsSelected);
-                console.log("CardsonTableRanking: ", CardsonTableRanking);
+                //console.log("CardsonTableRanking: ", CardsonTableRanking);
 
                 //Update Analytics
                 for (let k = 0; k <= 3; k++){
@@ -1212,7 +1212,7 @@ function PlayCard(i) {
                 }
                 //               
                 
-                console.log("Cards on Table: ", CardsonTable);
+                //console.log("Cards on Table: ", CardsonTable);
 
                 CheckWinner(PlayerinTurn);
 
@@ -1220,7 +1220,7 @@ function PlayCard(i) {
                     return EndTurn(PlayerinTurn)
                 } else {
                     
-                    return console.log("Winner is Player ID: " + Players[i].id)
+                    return //console.log("Winner is Player ID: " + Players[i].id)
                 }  
             }
         } 
@@ -1254,7 +1254,7 @@ function AIPlay(PlayerinTurn, CardsSelected) {
         //If Selected Card matches the rules
         CardsonTable = CardsonTable.concat(CardsSelected);
         CardsonTableRanking = rule.CardsontheTableRanking(CardsSelected);
-        console.log("CardsonTableRanking: ", CardsonTableRanking);
+        //console.log("CardsonTableRanking: ", CardsonTableRanking);
 
         //Update Analytics
         for (let k = 0; k <= 3; k++){
@@ -1266,7 +1266,7 @@ function AIPlay(PlayerinTurn, CardsSelected) {
         for (let i = 0; i <= CardsonTable.length - 1; i++) {
             cardsontablearray.push(CardsonTable[i].name)
         }
-        console.log("Cards Names: ", cardsontablearray)
+        //console.log("Cards Names: ", cardsontablearray)
 
         ClearCardsonTable();
 
@@ -1291,7 +1291,7 @@ function AIPlay(PlayerinTurn, CardsSelected) {
             Players[3].hand.length)
         //
 
-        console.log("Cards on Table: ", CardsonTable);
+        //console.log("Cards on Table: ", CardsonTable);
 
         CheckWinner(PlayerinTurn);
 
@@ -1299,7 +1299,7 @@ function AIPlay(PlayerinTurn, CardsSelected) {
             return EndTurn(PlayerinTurn)
         } else {
 
-            return console.log("Winner is Player ID " + Players[PlayerinTurn].id)
+            return //console.log("Winner is Player ID " + Players[PlayerinTurn].id)
         }                  
 
     }
@@ -1503,7 +1503,7 @@ function EndTurn(i) {
     } else {
 
     //Analyze for Player 0 if not AI turn
-    console.log("Your Turn")
+    //console.log("Your Turn")
     Analyze(PlayerinTurn);
     }
 
@@ -1512,7 +1512,7 @@ function EndTurn(i) {
 //Pass
 function Pass() {
     TextPass(PlayerinTurn);
-    console.log("Passed. Player ID: ", PlayerinTurn);
+    //console.log("Passed. Player ID: ", PlayerinTurn);
     EndTurn(PlayerinTurn);
 
 }
