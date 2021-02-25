@@ -14,7 +14,7 @@ var P0container, P1container, P2container, P3container,
 P0CardsonTablecontainer, P1CardsonTablecontainer, 
 P2CardsonTablecontainer, P3CardsonTablecontainer,
 P0NameContainer, P1NameContainer, P2NameContainer, P3NameContainer,
-HitButtonActivated, PassButtonActivated;
+HitButtonActivated, PassButtonActivated, ArrowContainer, PlayAreaContainer;
 
 var manifest = [
     {"src": "startscreen.png", "id": "startscreen"},
@@ -32,7 +32,7 @@ var manifest = [
     {"src": "P1namehighlighted.png", "id": "P1namehighlighted"}, 
     {"src": "P2namehighlighted.png", "id": "P2namehighlighted"}, 
     {"src": "P3namehighlighted.png", "id": "P3namehighlighted"}, 
-    {"src": "passtext.png", "id": "passtext"},
+    {"src": "passtext.png", "id": "passtext"}, {"src": "arrow.png", "id": "arrow"},
     {"src": "winner.png", "id": "winner"},
     {"src": "P0win.png", "id": "P0win"},{"src": "P1win.png", "id": "P1win"},
     {"src": "P2win.png", "id": "P2win"},{"src": "P3win.png", "id": "P3win"},
@@ -91,13 +91,9 @@ var bgwidth = background.graphics.command.w;
 var bgheight = background.graphics.command.h;
 stage.addChild(background);
 
-console.log("bgheight", bgheight, "bgwidth", bgwidth, 
-);
-
 //Loading Text
 var loadingcontainer = new createjs.Container();
 stage.addChild(loadingcontainer);
-
 
 var loadingtext = new createjs.Text("Loading...", "40px Copperplate", "#FFFFFF");
 loadingtext.shadow = new createjs.Shadow("#7B7D7D ", 2, 2, 5);
@@ -204,6 +200,7 @@ function RemoveWinnerScreen() {
 
 
 //2. Define Container to hold each player's hand information
+PlayAreaContainer = new createjs.Container();
 P0container = new createjs.Container();
 P1container = new createjs.Container();
 P2container = new createjs.Container();
@@ -216,11 +213,12 @@ P0NameContainer = new createjs.Container();
 P1NameContainer = new createjs.Container();
 P2NameContainer = new createjs.Container();
 P3NameContainer = new createjs.Container();
+ArrowContainer = new createjs.Container();
 
-stage.addChildAt(P0container,P1container,P2container,P3container,
+stage.addChildAt(PlayAreaContainer, P0container,P1container,P2container,P3container,
     P0CardsonTablecontainer,P1CardsonTablecontainer,P2CardsonTablecontainer,
     P3CardsonTablecontainer, P0NameContainer, P1NameContainer, P2NameContainer,
-    P3NameContainer, 1); 
+    P3NameContainer, ArrowContainer, 1); 
 
 //Define functions to display each player's cards
 
@@ -613,7 +611,7 @@ function CreateP1Name(){
 function CreateP2Name(){
     var P2name = new createjs.Bitmap(loader.getResult("P2name"));
     P2name.x = bgwidth * 320 / 1280;
-    P2name.y = bgheight * 54 / 720;
+    P2name.y = bgheight * 16 / 720;
     P2name.scale = 0.80;
     P2name.name = "P2name";
     P2NameContainer.addChild(P2name);
@@ -642,15 +640,38 @@ function ClearPlayerName() {
     P3NameContainer.removeAllChildren();
 }
 
+
 function HighlightPlayerName(PlayerinTurn) {
+
+    if (ArrowContainer.children.length !== 0) {
+        ArrowContainer.removeAllChildren();
+    }
+
+    //Define the Arrow Attachemnt
+    var arrow = new createjs.Bitmap(loader.getResult("arrow"));
+    arrow.name = "arrow";
+    arrow.scale = 0.75;
+    arrow.shadow = new createjs.Shadow("#1B2631", 2, 2, 5);
+    ArrowContainer.addChild(arrow);
     
     if (PlayerinTurn == 0) {
+        //Define the Highlight Effect
         P0NameContainer.removeChild(P0NameContainer.getChildByName("P0name"));
         var P0name = new createjs.Bitmap(loader.getResult("P0namehighlighted"));
         P0name.x = bgwidth *  140 / 1280;
         P0name.y = bgheight * 620 / 720;
         P0name.name = "P0namehighlighted";
         P0NameContainer.addChild(P0name);
+        
+        //Define Arrow position
+        arrow.x = P0name.x + bgwidth * 10 / 1280 +
+        (P0NameContainer.getBounds().width - arrow.getBounds().width) / 2;
+        arrow.y = P0name.y - bgheight * 50 / 720;
+
+        //Arrow Animation
+        createjs.Tween.get(ArrowContainer.getChildByName("arrow"), {loop: true})
+        .to({y: arrow.y + 10}, 500, createjs.Ease.getPowInOut(3))
+        .to({y: arrow.y}, 1000, createjs.Ease.getPowInOut(3));
     }
 
     if (PlayerinTurn == 1) {
@@ -660,15 +681,33 @@ function HighlightPlayerName(PlayerinTurn) {
         P1name.y = bgheight * 20 / 720;
         P1name.name = "P1namehighlighted";
         P1NameContainer.addChild(P1name);
+
+        arrow.rotation = 270;
+        arrow.x = P1name.x - bgwidth * 20 / 720; 
+        arrow.y = P1name.y - bgwidth * 5 / 1280 + 
+        ((P1NameContainer.getBounds().height + arrow.getBounds().height) / 2);
+
+        createjs.Tween.get(ArrowContainer.getChildByName("arrow"), {loop: true})
+        .to({x: arrow.x + 10}, 500, createjs.Ease.getPowInOut(3))
+        .to({x: arrow.x}, 1000, createjs.Ease.getPowInOut(3));
     }
 
     if (PlayerinTurn == 2) {
         P2NameContainer.removeChild(P2NameContainer.getChildByName("P2name"));
         var P2name = new createjs.Bitmap(loader.getResult("P2namehighlighted"));
         P2name.x = bgwidth * 300 / 1280;
-        P2name.y = bgheight * 54 / 720;
+        P2name.y = bgheight * 16 / 720;
         P2name.name = "P2namehighlighted";
         P2NameContainer.addChild(P2name);
+
+        arrow.rotation = 180;
+        arrow.x = P2name.x + bgwidth * 10 / 1280 +
+        P2NameContainer.getBounds().width - arrow.getBounds().width;
+        arrow.y = P2name.y + bgheight * 120 / 720;
+
+        createjs.Tween.get(ArrowContainer.getChildByName("arrow"), {loop: true})
+        .to({y: arrow.y + 10}, 500, createjs.Ease.getPowInOut(3))
+        .to({y: arrow.y}, 1000, createjs.Ease.getPowInOut(3));
     }
     
     if (PlayerinTurn == 3) {
@@ -678,6 +717,16 @@ function HighlightPlayerName(PlayerinTurn) {
         P3name.y = bgheight * 520 / 720;
         P3name.name = "P3namehighlighted";
         P3NameContainer.addChild(P3name);
+
+        arrow.rotation = 90;
+        arrow.x = P3name.x + bgwidth * 100 / 720; 
+        arrow.y = P3name.y - bgwidth * 30 / 720 + 
+        ((P3NameContainer.getBounds().height + arrow.getBounds().width) / 2);
+
+        //Arrow Animation
+        createjs.Tween.get(ArrowContainer.getChildByName("arrow"), {loop: true})
+        .to({x: arrow.x - 10}, 500, createjs.Ease.getPowInOut(3))
+        .to({x: arrow.x}, 1000, createjs.Ease.getPowInOut(3));
     }  
 };
 
@@ -1362,6 +1411,7 @@ function CheckWinner(PlayerinTurn) {
             P3container.removeAllChildren();
             ButtonHit.removeAllChildren();
             ButtonPass.removeAllChildren(); 
+            ArrowContainer.removeAllChildren();
             ClearPlayerName();
             ClearCardsonTable(); 
             ClickStart(WinnerScreenContainer);
@@ -1373,7 +1423,7 @@ function ClearTableDisplay(){
     var cleararray = [P0container, P1container, P2container, P3container,
         ButtonHit, ButtonPass, P0NameContainer, P1NameContainer,
         P2NameContainer, P3NameContainer, P0CardsonTablecontainer,
-        P1CardsonTablecontainer,P2CardsonTablecontainer, P3CardsonTablecontainer];
+        P1CardsonTablecontainer,P2CardsonTablecontainer, P3CardsonTablecontainer, ArrowContainer];
 
     for (let i = 0; i <= cleararray.length - 1; i++) {
         if (cleararray[i].children.length !== 0){
@@ -1387,7 +1437,7 @@ function InitTableDisplay(){
     var displayarray = [P0container, P1container, P2container, P3container,
         ButtonHit, ButtonPass, P0NameContainer, P1NameContainer,
         P2NameContainer, P3NameContainer, P0CardsonTablecontainer,
-        P1CardsonTablecontainer,P2CardsonTablecontainer, P3CardsonTablecontainer];
+        P1CardsonTablecontainer,P2CardsonTablecontainer, P3CardsonTablecontainer, ArrowContainer];
 
     for (let i = 0; i <= displayarray.length - 1; i++) {
         if (displayarray[i].alpha == 0){
