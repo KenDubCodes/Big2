@@ -104,7 +104,7 @@ var loadingcontainer = new createjs.Container();
 stage.addChild(loadingcontainer);
 
 
-var loadingtext = new createjs.Text("Loading...", "30px Copperplate", "#FFFFFF");
+var loadingtext = new createjs.Text("Loading...", "40px Copperplate", "#FFFFFF");
 loadingtext.shadow = new createjs.Shadow("#7B7D7D ", 2, 2, 5);
 loadingtext.x = 0;
 loadingtext.y = 0;

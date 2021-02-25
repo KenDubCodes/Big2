@@ -389,7 +389,7 @@ export default class AI {
         this.analytics.stragglingpairs - this.analytics.commandingpairs;
 
         //Cut Loss
-        if (Math.min(HandCount1, HandCount2, HandCount3) <= 2) {
+        if (Math.min(HandCount1, HandCount2, HandCount3) < 2) {
             if (this.command == true) {
                 console.log("Cut Loss | StopLoss")
                 cardsselected = this.StopLoss();
@@ -457,6 +457,14 @@ export default class AI {
                     (netpairstraggling >= 2)) {
                         
                         console.log("Heat | Reserved");
+                        return [];
+                    }
+
+                    //Add in a 40% chance of chickening out
+                    var random = Math.random();
+                    if ((this.commandrate >= 0.9) &&
+                     (random >= 0.6)) {
+                        console.log("Heat | Chickened Out");
                         return [];
                     }
                 }
