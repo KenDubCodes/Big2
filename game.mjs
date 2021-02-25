@@ -67,7 +67,6 @@ var manifest = [
 
 //1. Initialize
 var stage = new createjs.Stage("GameCanvas");
-stage.enableMouseOver(20);
 
 //Tickers
 createjs.Ticker.timingMode = createjs.Ticker.RAF_SYNCHED;
@@ -78,7 +77,7 @@ loader.addEventListener("complete", handleComplete);
 loader.loadManifest(manifest, true, "./images/");
 
 
-var canvasheight = 720;
+var canvasheight = 480;
 var canvaswidth = canvasheight * 1280 / 720;
 
 console.log("canvasheight", canvasheight, 
