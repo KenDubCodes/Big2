@@ -102,8 +102,8 @@ loadingcontainer.addChild(loadingtext);
 loadingcontainer.x = (bgwidth - loadingtext.getBounds().width) / 2;
 loadingcontainer.y = (bgheight - loadingtext.getBounds().height) / 2;
 createjs.Tween.get(loadingcontainer, {loop: true})
-.to({alpha: 0}, 250, createjs.Ease.getPowInOut(3))
-.to({alpha: 1}, 500, createjs.Ease.getPowInOut(3));
+.to({alpha: 0}, 500, createjs.Ease.getPowInOut(3))
+.to({alpha: 1}, 1000, createjs.Ease.getPowInOut(3));
 
 
 //Start Screen
