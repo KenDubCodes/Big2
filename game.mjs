@@ -1478,13 +1478,19 @@ function EndTurn(i) {
         ActivateHitConditions(P0selectedcards, CardsonTable);
 
         HitActivateListener();
-        ActivatePassButton();
-        ButtonPass.addEventListener("click", function(event) {
-            if (PlayerinTurn == 0) {
-                ClickPassAnimate();
-                Pass(PlayerinTurn);
-            }
-        });
+
+        if (Players[0].command == true) {
+            DeactivatePassButton();
+        } else {
+            ActivatePassButton();
+            ButtonPass.addEventListener("click", function(event) {
+                if (PlayerinTurn == 0) {
+                    ClickPassAnimate();
+                    Pass(PlayerinTurn);
+                }
+            });
+        }
+        
     }
     
     //Next Player Starts to Analyze
