@@ -94,13 +94,39 @@ stage.addChild(background);
 var loadingcontainer = new createjs.Container();
 stage.addChild(loadingcontainer);
 
-var loadingtext = new createjs.Text("Loading...", "30px Copperplate", "#FFFFFF");
+
+/* var loadingtext = new createjs.Text("Loading.", "30px Copperplate", "#FFFFFF");
 loadingtext.x = 0;
 loadingtext.y = 0;
+loadingtext.name = "Loading";
 loadingtext.textBaseline = "alphabetic";
 loadingcontainer.addChild(loadingtext);
 loadingcontainer.x = (bgwidth - loadingtext.getBounds().width) / 2;
-loadingcontainer.y = (bgheight - loadingtext.getBounds().height) / 2;
+loadingcontainer.y = (bgheight - loadingtext.getBounds().height) / 2; */
+
+const loadingtext1 = "Loading.";
+const loadingtext2 = "Loading..";
+const loadingtext3 = "Loading...";
+var loadingcount = 0;
+var loadingloop = setInterval(ChangeLoadingText(), 500);
+
+function ChangeLoadingText() {
+    const loadingarray = [loadingtext1, loadingtext2, loadingtext3];
+
+    var loadingtext = new createjs.Text(loadingarray[loadingcount], "30px Copperplate", "#FFFFFF");
+    loadingtext.x = 0;
+    loadingtext.y = 0;
+    loadingtext.name = "Loading";
+    loadingtext.textBaseline = "alphabetic";
+    loadingcontainer.removeAllChildren();
+    loadingcontainer.addChild(loadingtext);
+    loadingcontainer.x = (bgwidth - loadingtext.getBounds().width) / 2;
+    loadingcontainer.y = (bgheight - loadingtext.getBounds().height) / 2;
+    loadingcount++;
+    if (loadingcount > 2) {
+        loadingcount = 0;
+    }
+}
 
 //Start Screen
 var StartScreenContainer = new createjs.Container();
@@ -108,6 +134,7 @@ stage.addChildAt(StartScreenContainer, 1);
 
 //Add Start Screen and Start Button
 function handleComplete() {
+    clearInterval(loadingloop);
     loadingcontainer.removeAllChildren();
     AddStartScreen();
     CreatStartButton(StartScreenContainer);
