@@ -77,15 +77,27 @@ var loader = new createjs.LoadQueue(true);
 loader.addEventListener("complete", handleComplete);
 loader.loadManifest(manifest, true, "./images/");
 
+
+var canvasheight = 720;
+var canvaswidth = canvasheight * 1280 / 720;
+
+console.log("canvasheight", canvasheight, 
+"canvaswidth", canvaswidth);
+
+
 var background = new createjs.Shape();
 background.graphics.beginRadialGradientFill(["#2E7D32", "#F2E64E"], [0.05, 1],
-1080/2, 720/2, 1080/1.5, 1080/2, 720/2, 0).drawRect(0, 0, 1080, 720);
+canvaswidth/2, canvasheight/2, canvaswidth/1.5, canvaswidth/2, canvasheight/2, 0)
+.drawRect(0, 0, canvaswidth, canvasheight);
 background.x = 0;
 background.y = 0;
 background.name = "background";
 var bgwidth = background.graphics.command.w;
 var bgheight = background.graphics.command.h;
 stage.addChild(background);
+
+console.log("bgheight", bgheight, "bgwidth", bgwidth, 
+);
 
 //Loading Text
 var loadingcontainer = new createjs.Container();
@@ -125,10 +137,11 @@ function AddStartScreen(){
     startscreen.shadow = new createjs.Shadow("#424949", 1, 1, 10);
     startscreen.x = 0;
     startscreen.y = 0;
+    //startscreen.scale = bgheight / 720;
     startscreen.name = "startscreen";
     StartScreenContainer.addChild(startscreen);
-    StartScreenContainer.x = (bgwidth - startscreen.getBounds().width) / 2;
-    StartScreenContainer.y = bgheight;
+    StartScreenContainer.x = (bgwidth - startscreen.getBounds().width * startscreen.scale) / 2;
+    StartScreenContainer.y = bgheight * startscreen.scale;
 }
 
 function RemoveStartScreen() {
