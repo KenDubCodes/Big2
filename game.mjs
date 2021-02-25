@@ -69,7 +69,6 @@ var manifest = [
 var stage = new createjs.Stage("GameCanvas");
 stage.enableMouseOver(20);
 
-
 //Tickers
 createjs.Ticker.timingMode = createjs.Ticker.RAF_SYNCHED;
 createjs.Ticker.addEventListener("tick", stage);
@@ -81,8 +80,6 @@ loader.loadManifest(manifest, true, "./images/");
 var background = new createjs.Shape();
 background.graphics.beginRadialGradientFill(["#2E7D32", "#F2E64E"], [0.05, 1],
 1080/2, 720/2, 1080/1.5, 1080/2, 720/2, 0).drawRect(0, 0, 1080, 720);
-/* background.graphics.beginLinearGradientFill(["#229954", "#1E8449"], [0.05, 1],
-0, 0, 0, 720).drawRect(0, 0, 1080, 720); */
 background.x = 0;
 background.y = 0;
 background.name = "background";
@@ -95,37 +92,25 @@ var loadingcontainer = new createjs.Container();
 stage.addChild(loadingcontainer);
 
 
-/* var loadingtext = new createjs.Text("Loading.", "30px Copperplate", "#FFFFFF");
+var loadingtext = new createjs.Text("Loading...", "30px Copperplate", "#FFFFFF");
+loadingtext.shadow = new createjs.Shadow("#7B7D7D ", 2, 2, 5);
 loadingtext.x = 0;
 loadingtext.y = 0;
-loadingtext.name = "Loading";
+loadingtext.name = "loadingtext";
 loadingtext.textBaseline = "alphabetic";
 loadingcontainer.addChild(loadingtext);
 loadingcontainer.x = (bgwidth - loadingtext.getBounds().width) / 2;
-loadingcontainer.y = (bgheight - loadingtext.getBounds().height) / 2; */
+loadingcontainer.y = (bgheight - loadingtext.getBounds().height) / 2;
+var loadingloop = setInterval(LoadingAnimation(), 1000);
 
-const loadingtext1 = "Loading.";
-const loadingtext2 = "Loading..";
-const loadingtext3 = "Loading...";
-var loadingcount = 0;
-var loadingloop = setInterval(ChangeLoadingText(), 500);
+LoadingAnimation();
 
-function ChangeLoadingText() {
-    const loadingarray = [loadingtext1, loadingtext2, loadingtext3];
-
-    var loadingtext = new createjs.Text(loadingarray[loadingcount], "30px Copperplate", "#FFFFFF");
-    loadingtext.x = 0;
-    loadingtext.y = 0;
-    loadingtext.name = "Loading";
-    loadingtext.textBaseline = "alphabetic";
-    loadingcontainer.removeAllChildren();
-    loadingcontainer.addChild(loadingtext);
-    loadingcontainer.x = (bgwidth - loadingtext.getBounds().width) / 2;
-    loadingcontainer.y = (bgheight - loadingtext.getBounds().height) / 2;
-    loadingcount++;
-    if (loadingcount > 2) {
-        loadingcount = 0;
-    }
+function LoadingAnimation() {
+    createjs.Tween.get(loadingcontainer)
+    .to({alpha: 0}, 
+        250, createjs.Ease.getPowInOut(3))
+    .to({alpha: 1}, 
+        250, createjs.Ease.getPowInOut(3))        
 }
 
 //Start Screen
