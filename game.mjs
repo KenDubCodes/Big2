@@ -78,7 +78,7 @@ loader.loadManifest(manifest, true, "./images/");
 
 
 var canvasheight = 720;
-var canvaswidth = canvasheight * 1080 / 720;
+var canvaswidth = canvasheight * 1280 / 720;
 
 console.log("canvasheight", canvasheight, 
 "canvaswidth", canvaswidth);
