@@ -80,10 +80,6 @@ loader.loadManifest(manifest, true, "./images/");
 var canvasheight = 720;
 var canvaswidth = canvasheight * 1280 / 720;
 
-console.log("canvasheight", canvasheight, 
-"canvaswidth", canvaswidth);
-
-
 var background = new createjs.Shape();
 background.graphics.beginRadialGradientFill(["#2E7D32", "#F2E64E"], [0.05, 1],
 canvaswidth/2, canvasheight/2, canvaswidth/1.5, canvaswidth/2, canvasheight/2, 0)
@@ -234,7 +230,7 @@ function DisplayP0Hand(hand) {
     var cardfacewidth = cardface.getBounds().width;
 
     var cards = [];
-    var align = ((bgwidth - cardfacewidth) / 2) - ((hand.length - 1) * bgwidth / 54);
+    var align = ((bgwidth - cardfacewidth) / 2) - ((hand.length - 1) * bgwidth / 50);
     var count = 0;
     for (let n = 0; n <= hand.length - 1; n++) {
         P0HandSelectCheck.push(false);
@@ -324,7 +320,7 @@ function createP2CardBack(i) {
     var cardbackwidth = cardback.getBounds().width;
 
     var show = i - 1;
-    var align = ((bgwidth - cardbackwidth) / 2) - (i * bgwidth / 108);;
+    var align = ((bgwidth - cardbackwidth) / 2) - (i * bgwidth / 128);;
     if(show >= 0); {
         var cardbacks = [];
         var count = 0;
@@ -487,7 +483,7 @@ function P2CardsonTable(CardsonTable) {
         P2hits.push(new createjs.Bitmap(loader.getResult(CardsonTable[i])));
         P2hits[i].scale = 0.55;
         P2hits[i].x = align + count;
-        P2hits[i].y = bgheight / 4.235
+        P2hits[i].y = bgheight / 4
         P2CardsonTablecontainer.addChild(P2hits[i]);
 
     }
@@ -562,7 +558,7 @@ function TextPass(PlayerinTurn) {
         P2CardsonTablecontainer.alpha = 0;
 
         passtext.x = (bgwidth - passtext.getBounds().width) / 2;;
-        passtext.y = bgheight * 160 / 720;
+        passtext.y = bgheight * 180 / 720;
         P2CardsonTablecontainer.addChild(passtext);
         P2PlayCardAnimation();
     }
@@ -598,8 +594,8 @@ function ClearCardsonTable(){
 //Display Player Name
 function CreateP0Name(){
     var P0name = new createjs.Bitmap(loader.getResult("P0name"));
-    P0name.x = bgwidth *  96 / 1080;
-    P0name.y = bgheight * 608 / 720;
+    P0name.x = bgwidth *  160 / 1280;
+    P0name.y = bgheight * 620 / 720;
     P0name.scale = 0.80;
     P0name.name = "P0name";
     P0NameContainer.addChild(P0name);
@@ -607,8 +603,8 @@ function CreateP0Name(){
 
 function CreateP1Name(){
     var P1name = new createjs.Bitmap(loader.getResult("P1name"));
-    P1name.x = bgwidth * 900 / 1080;
-    P1name.y = bgheight * 30 / 720;
+    P1name.x = bgwidth * 1070 / 1280;
+    P1name.y = bgheight * 20 / 720;
     P1name.scale = 0.80;
     P1name.name = "P1name";
     P1NameContainer.addChild(P1name);
@@ -616,7 +612,7 @@ function CreateP1Name(){
 
 function CreateP2Name(){
     var P2name = new createjs.Bitmap(loader.getResult("P2name"));
-    P2name.x = bgwidth * 220 / 1080;
+    P2name.x = bgwidth * 320 / 1280;
     P2name.y = bgheight * 54 / 720;
     P2name.scale = 0.80;
     P2name.name = "P2name";
@@ -651,8 +647,8 @@ function HighlightPlayerName(PlayerinTurn) {
     if (PlayerinTurn == 0) {
         P0NameContainer.removeChild(P0NameContainer.getChildByName("P0name"));
         var P0name = new createjs.Bitmap(loader.getResult("P0namehighlighted"));
-        P0name.x = bgwidth *  96 / 1080;
-        P0name.y = bgheight * 608 / 720;
+        P0name.x = bgwidth *  140 / 1280;
+        P0name.y = bgheight * 620 / 720;
         P0name.name = "P0namehighlighted";
         P0NameContainer.addChild(P0name);
     }
@@ -660,8 +656,8 @@ function HighlightPlayerName(PlayerinTurn) {
     if (PlayerinTurn == 1) {
         P1NameContainer.removeChild(P1NameContainer.getChildByName("P1name"));
         var P1name = new createjs.Bitmap(loader.getResult("P1namehighlighted"));
-        P1name.x = bgwidth * 890 / 1080;
-        P1name.y = bgheight * 30 / 720;
+        P1name.x = bgwidth * 1070 / 1280;
+        P1name.y = bgheight * 20 / 720;
         P1name.name = "P1namehighlighted";
         P1NameContainer.addChild(P1name);
     }
@@ -669,7 +665,7 @@ function HighlightPlayerName(PlayerinTurn) {
     if (PlayerinTurn == 2) {
         P2NameContainer.removeChild(P2NameContainer.getChildByName("P2name"));
         var P2name = new createjs.Bitmap(loader.getResult("P2namehighlighted"));
-        P2name.x = bgwidth * 220 / 1080;
+        P2name.x = bgwidth * 300 / 1280;
         P2name.y = bgheight * 54 / 720;
         P2name.name = "P2namehighlighted";
         P2NameContainer.addChild(P2name);
