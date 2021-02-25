@@ -101,17 +101,10 @@ loadingtext.textBaseline = "alphabetic";
 loadingcontainer.addChild(loadingtext);
 loadingcontainer.x = (bgwidth - loadingtext.getBounds().width) / 2;
 loadingcontainer.y = (bgheight - loadingtext.getBounds().height) / 2;
-var loadingloop = setInterval(LoadingAnimation(), 1000);
+createjs.Tween.get(loadingcontainer, {loop: true})
+.to({alpha: 0}, 250, createjs.Ease.getPowInOut(3))
+.to({alpha: 1}, 500, createjs.Ease.getPowInOut(3));
 
-LoadingAnimation();
-
-function LoadingAnimation() {
-    createjs.Tween.get(loadingcontainer)
-    .to({alpha: 0}, 
-        250, createjs.Ease.getPowInOut(3))
-    .to({alpha: 1}, 
-        250, createjs.Ease.getPowInOut(3))        
-}
 
 //Start Screen
 var StartScreenContainer = new createjs.Container();
@@ -119,7 +112,6 @@ stage.addChildAt(StartScreenContainer, 1);
 
 //Add Start Screen and Start Button
 function handleComplete() {
-    clearInterval(loadingloop);
     loadingcontainer.removeAllChildren();
     AddStartScreen();
     CreatStartButton(StartScreenContainer);
