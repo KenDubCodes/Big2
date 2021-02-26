@@ -509,7 +509,7 @@ export default class AI {
             } 
 
             if (this.command == false) {
-                console.log("Heat | Follow")
+                //console.log("Heat | Follow")
                 cardsselected = this.Follow();
 
                 if ((cardsselected.length == 1) ||
