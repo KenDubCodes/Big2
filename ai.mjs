@@ -223,7 +223,7 @@ export default class AI {
                         //Check if can hit
                         if (urgentcombinations[0][2] > this.cardsontableranking){
                             this.commandrate = urgentcombinations[0][3];
-                            //console.log("Killer | Split");
+                            console.log("Killer | Split");
                             return urgentcombinations[0][0];
                         }
 
@@ -247,7 +247,7 @@ export default class AI {
                             if (urgentcombinations[j][2] > this.cardsontableranking){
 
                                 this.commandrate = urgentcombinations[j][3];
-                                //console.log("Killer | Split");
+                                console.log("Killer | Split");
                                 return urgentcombinations[j][0];
                             }
                         }
@@ -276,7 +276,7 @@ export default class AI {
                         for (let j = 0 ; j <= urgentcombinations.length - 1; j++) {
                             if (urgentcombinations[j][2] > this.cardsontableranking){
                                 this.commandrate = urgentcombinations[j][3];
-                                //console.log("Killer | Split");
+                                console.log("Killer | Split");
                                 return urgentcombinations[j][0];
                             }
                         }
@@ -391,14 +391,14 @@ export default class AI {
         //Cut Loss
         if (Math.min(HandCount1, HandCount2, HandCount3) < 2) {
             if (this.command == true) {
-                //console.log("Cut Loss | StopLoss")
+                console.log("Cut Loss | StopLoss")
                 cardsselected = this.StopLoss();
                 this.cardselected = cardsselected;
                 return this.cardselected;
             } 
 
             if (this.command == false) {
-                //console.log("Cut Loss | Urgent")
+                console.log("Cut Loss | Urgent")
                 cardsselected = this.Urgent();
                 this.cardselected = cardsselected;
                 return this.cardselected;
@@ -411,14 +411,14 @@ export default class AI {
         (netpairstraggling <= 0)) {
 
             if (this.command == true) {
-                //console.log("Killer | Broom")
+                console.log("Killer | Broom")
                 cardsselected = this.Broom();
                 this.cardselected = cardsselected;
                 return this.cardselected;
             } 
 
             if (this.command == false) {
-                //console.log("Killer | Strike")
+                console.log("Killer | Strike")
                 cardsselected = this.Strike();
 
                 //Try Split if no valid result from Strike()
@@ -438,14 +438,14 @@ export default class AI {
             var cardsselected = [];
 
             if (this.command == true) {
-                //console.log("Heat | Broom")
+                console.log("Heat | Broom")
                 cardsselected = this.Broom();
                 this.cardselected = cardsselected;
                 return this.cardselected;
             } 
 
             if (this.command == false) {
-                //console.log("Heat | Follow")
+                console.log("Heat | Follow")
                 cardsselected = this.Follow();
 
                 //Reserve bigger cards at only when too many stragglers
@@ -456,7 +456,7 @@ export default class AI {
                     (netsinglestraggling >= 2) &&
                     (netpairstraggling >= 2)) {
                         
-                        //console.log("Heat | Reserved");
+                        console.log("Heat | Reserved");
                         return [];
                     }
 
@@ -464,7 +464,7 @@ export default class AI {
                     var random = Math.random();
                     if ((this.commandrate >= 0.9) &&
                      (random >= 0.6)) {
-                        //console.log("Heat | Chickened Out");
+                        console.log("Heat | Chickened Out");
                         return [];
                     }
                 }
@@ -481,14 +481,14 @@ export default class AI {
             var cardsselected = [];
 
             if (this.command == true) {
-                //console.log("Mode: Normal | Broom")
+                console.log("Mode: Normal | Broom")
                 cardsselected = this.Broom();
                 this.cardselected = cardsselected;
                 return this.cardselected;
             } 
 
             if (this.command == false) {
-                //console.log("Mode: Normal | Follow")
+                console.log("Mode: Normal | Follow")
                 cardsselected = this.Follow();
                 
                 //Reserve bigger cards at early stage
@@ -496,7 +496,7 @@ export default class AI {
                 (cardsselected.length == 2)) {
 
                     if (this.commandrate >= 0.9) {
-                        //console.log("Normal | Reserved")
+                        console.log("Normal | Reserved")
                         return [];
                     }
                 }
