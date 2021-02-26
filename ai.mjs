@@ -55,9 +55,6 @@ export default class AI {
                             return combinations[k][0];
                         }
                     }
-
-                    
-
                 }
             }
 
@@ -118,7 +115,16 @@ export default class AI {
                 if (singles[i][2] > this.cardsontableranking){
 
                     //Account for the end game 2 singles scenario
-                    //in which you expect other player to play urgent()
+                    //If can end game with the highest card then play higest card
+                    if ((this.analytics.rawhand.length == 2) &&
+                    (this.analytics.analyzedhand[0][0][i][3] == 1)){
+                        //console.log("Follow | End Game");
+                        this.commandrate = this.analytics.analyzedhand[0][0][i][3];
+                        return this.analytics.analyzedhand[0][0][i][0];
+                    }
+
+
+                    //If you expect other player to play urgent()
                     if ((this.analytics.rawhand.length == 2) &&
                     //Meaning that it's the higher but not largest card
                     (i == 1) && (this.analytics.analyzedhand[0][0][i][3] !== 1)) {
@@ -196,6 +202,15 @@ export default class AI {
                 (singles[i][3] >= 0.9)){
 
                     //Account for the end game 2 singles scenario
+
+                    //If can end game with the highest card then play higest card
+                    if ((this.analytics.rawhand.length == 2) &&
+                    (this.analytics.analyzedhand[0][0][i][3] == 1)){
+                        //console.log("Follow | End Game");
+                        this.commandrate = this.analytics.analyzedhand[0][0][i][3];
+                        return this.analytics.analyzedhand[0][0][i][0];
+                    }
+
                     //in which you expect other player to play urgent()
                     if ((this.analytics.rawhand.length == 2) &&
                     //Meaning that it's the higher but not largest card
