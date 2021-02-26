@@ -1088,7 +1088,7 @@ function Analyze(PlayerinTurn) {
     var cardsselected = Players[PlayerinTurn].ai.PickCards(
         handcounts[0], handcounts[1], handcounts[2], nextplayerhand);
 
-    console.log("Player in Turn: ", Players[PlayerinTurn].ai);
+    //console.log("Player in Turn: ", Players[PlayerinTurn].ai);
     //console.log("AI Pick: ", cardsselected);
 
     return cardsselected;
@@ -1413,6 +1413,7 @@ function CheckWinner(PlayerinTurn) {
         }, 1250)
 
         setTimeout(() => {
+            P0selectedcards = [];
             P0container.removeAllChildren();
             P1container.removeAllChildren();
             P2container.removeAllChildren();
