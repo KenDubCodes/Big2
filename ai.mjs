@@ -509,19 +509,18 @@ export default class AI {
             } 
 
             if (this.command == false) {
-                //console.log("Heat | Follow")
+                console.log("Heat | Follow")
                 cardsselected = this.Follow();
 
-                //Reserve bigger cards at only when too many stragglers
                 if ((cardsselected.length == 1) ||
                 (cardsselected.length == 2)) {
 
-                    if ((this.commandrate >= 0.9) &&
-                    (netsinglestraggling >= 1) &&
-                    (netpairstraggling >= 1)) {
-                        
-                        //console.log("Heat | Reserved");
-                        return [];
+                    //Reserve biggest cards at only when too many stragglers
+                    if (this.commandrate == 1) {
+                        if (netsinglestraggling >= 1 || netpairstraggling >= 1){
+                            //console.log("Heat | Reserved");
+                            return [];
+                        }
                     }
 
                     //Add in a 40% chance of chickening out
