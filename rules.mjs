@@ -107,13 +107,16 @@ export default class Rules {
         for (let i = lastcard; i >= 2; i--) {
             if (this.isThreeofKind(CardsSelected) == true) {
                     
-                //Determine Fullhouse ranking to look for pairs
-                var fullhouseclass = CardsSelected[i].value
-                //var fiveranking = CardsSelected[i].cardranking + 200
+                //The third ([2]) card of five card must be fullhouse class
+                var fullhouseclass = CardsSelected[2].value
 
                 //Remove the Fullhouse value to avoid duplication when checking Pairs
                 var remainingnonthree = [...CardsSelected];
-                remainingnonthree.splice(i - 2 , 3)
+                for (let k = lastcard; k >= 0; k--) {
+                    if (CardsSelected[k].value == fullhouseclass){
+                        remainingnonthree.splice(k , 1);
+                    }
+                }
 
                 //Make sure the pair is not from the ThreeofKind
                 for (let j = remainingnonthree.length - 1; j >= 1; j--) {
@@ -135,8 +138,8 @@ export default class Rules {
         //First 4 or last four cards equal
         for (let i = lastcard; i >= 4; i--) {
             if ((this.isThreeofKind(CardsSelected) == true) &&
-            ((CardsSelected[i].value == CardsSelected[i - 1].value) ||
-            (CardsSelected[i - 3].value == CardsSelected[i - 4].value))) {
+            ((CardsSelected[i].value == CardsSelected[i - 3].value) ||
+            (CardsSelected[i - 4].value == CardsSelected[i - 1].value))) {
                 
                 //Have more than 5 cards to form FourofKind
                 if (CardsSelected.length >= 5){
@@ -171,24 +174,30 @@ export default class Rules {
 
             //Royal Flush to be considered first to avoid system confusion
             if (this.isRoyalFlush(CardsSelected)[0] == true) {
+                //console.log("isRoyalFlush");
                 return [true, this.isRoyalFlush(CardsSelected)[1]]
+
             }
 
-            if (this.isStraight(CardsSelected)[0] == true) {
-                return [true, this.isStraight(CardsSelected)[1]]
-            } 
-
-            if (this.isFlush(CardsSelected)[0] == true) {
-                return [true, this.isFlush(CardsSelected)[1]]
-            } 
+            if (this.isFourofKind(CardsSelected)[0] == true) {
+                //console.log("isFourofKind");
+                return [true, this.isFourofKind(CardsSelected)[1]]
+            }
 
             if (this.isFullHouse(CardsSelected)[0] == true) {
+                //console.log("isFullHouse");
                 return [true, this.isFullHouse(CardsSelected)[1]]
             } 
 
-            if (this.isFourofKind(CardsSelected)[0] == true) {
-                return [true, this.isFourofKind(CardsSelected)[1]]
-            }
+            if (this.isFlush(CardsSelected)[0] == true) {
+                //console.log("isFlush");
+                return [true, this.isFlush(CardsSelected)[1]]
+            } 
+
+            if (this.isStraight(CardsSelected)[0] == true) {
+                //console.log("isStraight");
+                return [true, this.isStraight(CardsSelected)[1]]
+            } 
         }
         return false
     }
@@ -294,30 +303,33 @@ export default class Rules {
 
 }
 
-/*    
+/*      
 //For rule testing
 var deck = new Deck()
 var rule = new Rules()
 
 var hit = [
+    { name: '3♦', suit: '♦', value: 0, cardranking: 1 },
+    { name: '3♣', suit: '♣', value: 0, cardranking: 2 },
     { name: '3♥', suit: '♥', value: 0, cardranking: 3 },
-    { name: '4♠', suit: '♠', value: 1, cardranking: 8 },
-    { name: '5♠', suit: '♠', value: 2, cardranking: 12 },
-    { name: '6♠', suit: '♠', value: 3, cardranking: 16 },
-    { name: '2♥', suit: '♥', value: 12, cardranking: 51 }
+    { name: '3♠', suit: '♠', value: 0, cardranking: 4 },
+    { name: '7♠', suit: '♠', value: 4, cardranking: 20 }
+
 ]
 
 var cardsonTable = [
-    { name: '10♠', suit: '♠', value: 7, cardranking: 32 },
-    { name: 'J♠', suit: '♠', value: 8, cardranking: 36 },
-    { name: 'Q♥', suit: '♥', value: 9, cardranking: 39 },
-    { name: 'K♠', suit: '♠', value: 10, cardranking: 44 },
-    { name: 'A♠', suit: '♠', value: 11, cardranking: 48 },
+     { name: '10♦', suit: '♦', value: 7, cardranking: 29 },
+    { name: 'J♣', suit: '♣', value: 8, cardranking: 34 },
+    { name: 'Q♦', suit: '♦', value: 9, cardranking: 37 },
+    { name: 'K♣', suit: '♣', value: 10, cardranking: 42 },
+    { name: 'A♥', suit: '♥', value: 11, cardranking: 47 } 
 ]
 
 
-console.log("Valid Hit: ", rule.ValidHit(hit, cardsonTable),
-"Straight Ranking: ", rule.CardsontheTableRanking(hit));
+console.log("Valid First Command Hit: ", rule.ValidFirstCommand(hit, cardsonTable),
+"isFourofKind ", rule.isFourofKind(hit),
+"isFiveCard", rule.isFiveCard(hit),
+"Card Ranking: ", rule.CardsontheTableRanking(hit));
 //console.log("Can Hit: " + rule.ValidHit(hit, cardsonTable))
 //console.log("Cards on Table: " + JSON.stringify(cardsonTable))
 //console.log("Hit: " + JSON.stringify(hit))
