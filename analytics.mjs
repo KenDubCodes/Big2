@@ -1110,7 +1110,7 @@ export default class Analytics {
         //Count number of small cards
         var stragglers = 0;
         for (let t = 0; t <= one.length; t++){
-            if(singlecommandrates[t] < .75){
+            if(singlecommandrates[t] < .9){
                 stragglers++
             }
         }

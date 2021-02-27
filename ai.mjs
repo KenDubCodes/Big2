@@ -118,7 +118,7 @@ export default class AI {
                     //If can end game with the highest card then play higest card
                     if ((this.analytics.rawhand.length == 2) &&
                     (this.analytics.analyzedhand[0][0][i][3] == 1)){
-                        //console.log("Follow | End Game");
+                        console.log("Follow | End Game");
                         this.commandrate = this.analytics.analyzedhand[0][0][i][3];
                         return this.analytics.analyzedhand[0][0][i][0];
                     }
@@ -135,7 +135,7 @@ export default class AI {
                             return this.analytics.analyzedhand[0][0][i][0];
                         }
                         //If smaller card not playable then pass
-                        //console.log("Follow | Hold for Urgent");
+                        console.log("Follow | Hold for Urgent");
                         return [];
                     }
 
@@ -206,7 +206,7 @@ export default class AI {
                     //If can end game with the highest card then play higest card
                     if ((this.analytics.rawhand.length == 2) &&
                     (this.analytics.analyzedhand[0][0][i][3] == 1)){
-                        //console.log("Follow | End Game");
+                        console.log("Strike | End Game");
                         this.commandrate = this.analytics.analyzedhand[0][0][i][3];
                         return this.analytics.analyzedhand[0][0][i][0];
                     }
@@ -218,11 +218,12 @@ export default class AI {
 
                         //If smaller card playable play smaller card
                         if(singles[0][2] > this.cardsontableranking){
-                            this.commandrate = this.analytics.analyzedhand[0][0][i][3];
-                            return this.analytics.analyzedhand[0][0][i][0];
+                            this.commandrate = this.analytics.analyzedhand[0][0][0][3];
+                            console.log("Strike | Play Lower First");
+                            return this.analytics.analyzedhand[0][0][0][0];
                         }
                         //If smaller card not playable then pass
-                        //console.log("Follow | Hold for Urgent");
+                        console.log("Strike | Hold for Urgent");
                         return [];
                     }
 
@@ -277,8 +278,8 @@ export default class AI {
         return [];
     }
 
-    //Split Command Rate = 1 cards to gain command in Killer mode
-    KillerSplit() {
+    //Split Command Rate = 1 cards to gain command 
+    Split() {
         
         var urgentrawhand = [];
         var urgentcombinations = [];
@@ -302,7 +303,7 @@ export default class AI {
                         //Check if can hit
                         if (urgentcombinations[0][2] > this.cardsontableranking){
                             this.commandrate = urgentcombinations[0][3];
-                            //console.log("Killer | Split");
+                            console.log("Follow / Strike | Split");
                             return urgentcombinations[0][0];
                         }
 
@@ -326,7 +327,7 @@ export default class AI {
                             if (urgentcombinations[j][2] > this.cardsontableranking){
 
                                 this.commandrate = urgentcombinations[j][3];
-                                //console.log("Killer | Split");
+                                console.log("Follow / Strike | Split");
                                 return urgentcombinations[j][0];
                             }
                         }
@@ -355,7 +356,7 @@ export default class AI {
                         for (let j = 0 ; j <= urgentcombinations.length - 1; j++) {
                             if (urgentcombinations[j][2] > this.cardsontableranking){
                                 this.commandrate = urgentcombinations[j][3];
-                                //console.log("Killer | Split");
+                                console.log("Follow / Strike | Split");
                                 return urgentcombinations[j][0];
                             }
                         }
@@ -364,6 +365,7 @@ export default class AI {
                 }
             } 
         }
+        console.log("Split Check Returns no possbility")
         return [];
         
     }
@@ -467,21 +469,38 @@ export default class AI {
         var netpairstraggling = 
         this.analytics.stragglingpairs - this.analytics.commandingpairs;
 
-        //Cut Loss only when the next player has 1 card left
-        if (NextPlayerHand == 1) {
-            if (this.command == true) {
-                //console.log("Cut Loss | StopLoss")
-                cardsselected = this.StopLoss();
-                this.cardselected = cardsselected;
-                return this.cardselected;
-            } 
+        //Cut Loss Mode
+        if (Math.min(HandCount1, HandCount2, HandCount3) == 1){
+            if ((this.command == false) &&
+            (NextPlayerHand !== 1)) {
 
-            if (this.command == false) {
-                //console.log("Cut Loss | Urgent")
-                cardsselected = this.Urgent();
-                this.cardselected = cardsselected;
-                return this.cardselected;
+                //Jump and play Urgent() certain probability
+                var random = Math.random();
+                if (random <= 0.5) {
+                    console.log("Cut Loss | Jump")
+                    cardsselected = this.Urgent();
+                    this.cardselected = cardsselected;
+                    return this.cardselected;
+                }
             }  
+
+            //Cut Loss only when the next player has 1 card left
+            if (NextPlayerHand == 1) {
+                if (this.command == true) {
+                    console.log("Cut Loss | StopLoss")
+                    cardsselected = this.StopLoss();
+                    this.cardselected = cardsselected;
+                    return this.cardselected;
+                } 
+
+                if (this.command == false) {
+                    console.log("Cut Loss | Urgent")
+                    cardsselected = this.Urgent();
+                    this.cardselected = cardsselected;
+                    return this.cardselected;
+                }  
+
+            }            
 
         }
 
@@ -490,19 +509,19 @@ export default class AI {
         (netpairstraggling <= 0)) {
 
             if (this.command == true) {
-                //console.log("Killer | Broom")
+                console.log("Killer | Broom")
                 cardsselected = this.Broom();
                 this.cardselected = cardsselected;
                 return this.cardselected;
             } 
 
             if (this.command == false) {
-                //console.log("Killer | Strike")
+                console.log("Killer | Strike")
                 cardsselected = this.Strike();
 
                 //Try Split if no valid result from Strike()
                 if (cardsselected.length == 0){
-                    cardsselected = this.KillerSplit();
+                    cardsselected = this.Split();
                 }
                 this.cardselected = cardsselected;
                 return this.cardselected;
@@ -524,25 +543,58 @@ export default class AI {
             } 
 
             if (this.command == false) {
-                //console.log("Heat | Follow")
+                console.log("Heat | Follow")
                 cardsselected = this.Follow();
+
+                console.log("Command rate before adjustment: ", this.commandrate)
 
                 if ((cardsselected.length == 1) ||
                 (cardsselected.length == 2)) {
 
                     //Reserve biggest cards at only when too many stragglers
-                    if (this.commandrate == 1) {
-                        if (netsinglestraggling >= 1 || netpairstraggling >= 1){
-                            //console.log("Heat | Reserved");
-                            return [];
-                        }
+                    if ((this.commandrate == 1) && (cardsselected.length == 1)) {
+                        if (netsinglestraggling >= 1){
+                            console.log("Heat | Reserved");
+                            cardsselected = [];
+                        } 
                     }
 
-                    //Add in a 40% chance of chickening out
+                    if ((this.commandrate == 1) && (cardsselected.length == 2)) {
+                        if (netpairstraggling >= 1){
+                            console.log("Heat | Reserved");
+                            cardsselected = [];
+                        }   
+                    }
+                    
+                    console.log(
+                        "Singles Length: ", this.analytics.analyzedhand[0][0].length,
+                        "Pairs Length:", this.analytics.analyzedhand[1][0].length 
+                    )
+
+                    //But then check if can end game immediately
+                    if (this.analytics.rawhand.length <= 4) {
+                    //When spliting commanding pair or three can end game
+                        if ((this.analytics.analyzedhand[0][0].length - 
+                            this.analytics.analyzedhand[1][0].length <= 1) || 
+                        (this.analytics.analyzedhand[0][0].length - 
+                            this.analytics.analyzedhand[2][0].length <= 2)) {
+                        
+                            console.log("Split Check Activated");
+                            cardsselected = this.Split();
+                            
+                            //End Process if successfully Split
+                            if (cardsselected.length !== 0){
+                                this.cardselected = cardsselected;
+                                return this.cardselected;
+                            }
+                        }                        
+                    }
+
+                    //Add in a 40% chance of chickening out to play non highest cards
                     var random = Math.random();
-                    if ((this.commandrate >= 0.9) &&
+                    if ((this.commandrate >= 0.9) && (this.commandrate !== 1) &&
                      (random >= 0.6)) {
-                        //console.log("Heat | Chickened Out");
+                        console.log("Heat | Chickened Out");
                         return [];
                     }
                 }
@@ -566,7 +618,7 @@ export default class AI {
             } 
 
             if (this.command == false) {
-                //console.log("Mode: Normal | Follow")
+                console.log("Mode: Normal | Follow")
                 cardsselected = this.Follow();
                 
                 //Reserve bigger cards at early stage
@@ -574,7 +626,7 @@ export default class AI {
                 (cardsselected.length == 2)) {
 
                     if (this.commandrate >= 0.9) {
-                        //console.log("Normal | Reserved")
+                        console.log("Normal | Reserved")
                         return [];
                     }
                 }
